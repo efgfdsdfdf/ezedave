@@ -136,75 +136,65 @@ document.getElementById("addNoteBtn")?.addEventListener("click", () => {
 window.addEventListener("DOMContentLoaded", displayNotes);
 
 // ====================== GPA ======================
-function initGPA() {
-  const gpaForm = document.getElementById("gpaForm");
-  if (!gpaForm) return;
+// ====================== GPA CALCULATOR ======================
 
-  gpaForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    const course = document.getElementById("course").value.trim();
-    const grade = parseFloat(document.getElementById("grade").value);
-    const unit = parseInt(document.getElementById("unit").value);
-    if (!course || isNaN(grade) || isNaN(unit)) return;
+// Add new course row
+function addCourse() {
+  const tbody = document.querySelector("#courseTable tbody");
+  if (!tbody) return;
 
-    const currentUser = localStorage.getItem("currentUser");
-    let users = JSON.parse(localStorage.getItem("users")) || {};
-    if (!users[currentUser]) users[currentUser] = { gpa: [] };
-    if (!users[currentUser].gpa) users[currentUser].gpa = [];
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td><input type="text" placeholder="Course Code" class="course-code"></td>
+    <td>
+      <select class="grade">
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+        <option value="F">F</option>
+      </select>
+    </td>
+    <td><input type="number" class="unit" min="1" max="6" value="3"></td>
+  `;
+  tbody.appendChild(row);
+}
 
-    users[currentUser].gpa.push({ course, grade, unit });
-    localStorage.setItem("users", JSON.stringify(users));
+// Calculate GPA
+function calculateGPA() {
+  const rows = document.querySelectorAll("#courseTable tbody tr");
+  let totalPoints = 0;
+  let totalUnits = 0;
 
-    gpaForm.reset();
-    displayGPA();
+  rows.forEach(row => {
+    const grade = row.querySelector(".grade").value;
+    const unit = parseInt(row.querySelector(".unit").value);
+
+    let gradePoint = 0;
+    switch (grade) {
+      case "A": gradePoint = 5; break;
+      case "B": gradePoint = 4; break;
+      case "C": gradePoint = 3; break;
+      case "D": gradePoint = 2; break;
+      case "F": gradePoint = 0; break;
+    }
+
+    totalPoints += gradePoint * unit;
+    totalUnits += unit;
   });
 
-  displayGPA();
+  const gpa = totalUnits > 0 ? (totalPoints / totalUnits).toFixed(2) : 0;
+  document.getElementById("gpaResult").textContent = "Your GPA: " + gpa;
 }
 
-function displayGPA() {
-  const gpaTable = document.getElementById("gpaTable");
-  const gpaResult = document.getElementById("gpaResult");
-  if (!gpaTable || !gpaResult) return;
+// Hook up buttons after DOM loads
+document.addEventListener("DOMContentLoaded", function () {
+  const addBtn = document.getElementById("addCourseBtn");
+  const calcBtn = document.getElementById("calcGpaBtn");
 
-  const currentUser = localStorage.getItem("currentUser");
-  let users = JSON.parse(localStorage.getItem("users")) || {};
-  const gpaData = users[currentUser]?.gpa || [];
-
-  gpaTable.innerHTML = "";
-  let totalPoints = 0, totalUnits = 0;
-
-  gpaData.forEach((entry, index) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${entry.course}</td>
-      <td>${entry.grade}</td>
-      <td>${entry.unit}</td>
-      <td><button onclick="deleteCourse(${index})">❌</button></td>
-    `;
-    gpaTable.appendChild(row);
-    totalPoints += entry.grade * entry.unit;
-    totalUnits += entry.unit;
-  });
-
-  if (totalUnits > 0) {
-    gpaResult.textContent = `🎓 Your GPA: ${(totalPoints / totalUnits).toFixed(2)}`;
-  } else {
-    gpaResult.textContent = "No courses added yet.";
-  }
-}
-
-function deleteCourse(index) {
-  const currentUser = localStorage.getItem("currentUser");
-  let users = JSON.parse(localStorage.getItem("users")) || {};
-  if (!users[currentUser]?.gpa) return;
-
-  users[currentUser].gpa.splice(index, 1);
-  localStorage.setItem("users", JSON.stringify(users));
-  displayGPA();
-}
-
-document.addEventListener("DOMContentLoaded", initGPA);
+  if (addBtn) addBtn.addEventListener("click", addCourse);
+  if (calcBtn) calcBtn.addEventListener("click", calculateGPA);
+});
 
 // ====================== TIMETABLE ======================
 // ====================== TIMETABLE ======================
@@ -325,4 +315,5 @@ document.getElementById("resetPicBtn")?.addEventListener("click", function() {
     localStorage.setItem("users", JSON.stringify(users));
   }
 });
+
 
