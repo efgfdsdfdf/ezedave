@@ -159,7 +159,11 @@ function addCourse() {
   `;
   tbody.appendChild(row);
 }
+// Add fade-in animation
+  row.classList.add("fade-in");
 
+  tbody.appendChild(row);
+}
 // Calculate GPA
 function calculateGPA() {
   const rows = document.querySelectorAll("#courseTable tbody tr");
@@ -315,5 +319,6 @@ document.getElementById("resetPicBtn")?.addEventListener("click", function() {
     localStorage.setItem("users", JSON.stringify(users));
   }
 });
+
 
 
