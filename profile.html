@@ -10,6 +10,20 @@
   <script src="script.js" defer></script>
 </head>
 <body>
+  <script>
+  // Redirect to login if not logged in
+  if (!localStorage.getItem("loggedInUser")) {
+    window.location.href = "login.html";
+  }
+
+  function logout() {
+    localStorage.removeItem("loggedInUser");
+    window.location.href = "login.html";
+  }
+</script>
+
+<!-- Add logout button anywhere -->
+<button onclick="logout()">Logout</button>
   <!-- Navbar -->
   <nav class="navbar">
     <div class="brand">Student Companion | Team Black 🖤</div>
@@ -120,6 +134,7 @@
   </script>
 </body>
 </html>
+
 
 
 
