@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Companion - Login</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="brand">Student Companion | Built by Team Black 🖤</div>
+  </nav>
+
+  <div class="container login-container">
+    <h1>Welcome to Student Companion</h1>
+    <p>Login or create a new account to continue.</p>
+
+    <!-- Login Form -->
+    <div class="form-section">
+      <h2>Login</h2>
+      <input type="text" id="loginUsername" placeholder="Enter Username" required>
+      <input type="password" id="loginPassword" placeholder="Enter Password" required>
+      <button onclick="login(
+        document.getElementById('loginUsername').value.trim(), 
+        document.getElementById('loginPassword').value.trim()
+      )">Login</button>
+    </div>
+
+    <hr style="margin: 20px 0; border: 1px solid #fff;">
+
+    <!-- Sign-Up Form -->
+    <div class="form-section">
+      <h2>Sign Up</h2>
+      <input type="text" id="signupUsername" placeholder="Choose Username" required>
+      <input type="password" id="signupPassword" placeholder="Choose Password" required>
+      <button onclick="signup(
+        document.getElementById('signupUsername').value.trim(), 
+        document.getElementById('signupPassword').value.trim()
+      )">Sign Up</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Student Companion | Built by Team Black 🖤</p>
+    <p>powered by Ezeilo</p>
+  </footer>
+
+  <script>
+    // Apply fade-in effect
+    window.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add("fade-in");
+    });
+  </script>
+</body>
+</html>
+

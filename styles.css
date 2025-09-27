@@ -1,0 +1,287 @@
+textarea#noteInput {
+  width: 100%;
+  max-width: 900px;
+  min-height: 300px; /* make it larger on page load */
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 16px;
+  line-height: 1.5;
+  resize: vertical; 
+  display: block;
+  margin: 0 auto 15px;
+  box-sizing: border-box;
+}
+
+
+#notesList .delete-btn {
+  background: #f44336;
+  color: white;
+}
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1e1e2f, #252547, #3b3b98, #7d5fff);
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+  color: white;
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0,0,0,0.7);
+  padding: 15px 25px;
+  border-radius: 10px;
+  margin: 10px;
+  flex-wrap: wrap;
+}
+
+.navbar a {
+  color: white;
+  margin-left: 15px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.navbar a:hover {
+  color: #ffde59;
+}
+
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  text-align: center;
+  background: rgba(255,255,255,0.05);
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.timetable-container h1 {
+  margin-bottom: 20px;
+  color: #FFD700;
+  text-shadow: 1px 1px 4px #000;
+}
+
+.input-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.input-group input,
+.input-group select {
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+
+.input-group button {
+  background: #ff4757;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.input-group button:hover {
+  background: #ff6b81;
+  transform: scale(1.05);
+}
+
+#timetableList {
+  list-style: none;
+  padding: 0;
+}
+
+#timetableList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.1);
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  transition: 0.3s;
+}
+
+#timetableList li:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+#timetableList button {
+  background: #e63946;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+#timetableList button:hover {
+  background: #d62828;
+}
+
+footer {
+  margin-top: auto;
+  padding: 15px;
+  text-align: center;
+  background: rgba(0,0,0,0.6);
+  border-radius: 12px;
+  color: #fff;
+}
+.profile-pic {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #fff;
+  display: block;
+  margin: 20px auto;
+}
+
+#uploadBtn, #resetPicBtn {
+  display: block;
+  margin: 10px auto;
+}
+.profile-container {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 15px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.profile-pic {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #fff;
+  margin: 20px auto;
+  display: block;
+}
+
+.btn {
+  margin: 10px auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: block;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+.delete-btn {
+  background: #f44336;
+  color: white;
+}
+.delete-btn:hover {
+  background: #d32f2f;
+}
+.welcome-message {
+  max-width: 900px;           /* Controls width */
+  margin: 20px auto;           /* Centers the message */
+  padding: 20px 30px;          /* Adds space inside the box */
+  background: rgba(255, 255, 255, 0.1);  /* Slightly transparent highlight */
+  border-left: 5px solid #ffde59;       /* Highlight stripe on the left */
+  border-radius: 12px;         /* Rounded corners */
+  font-size: 1.3rem;           /* Larger text */
+  font-weight: bold;           /* Make it stand out */
+  color: #ffffff;              /* Text color */
+  text-align: center;          /* Centered text */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* Subtle shadow for depth */
+  line-height: 1.5;            /* Easier to read */
+  animation: fadeIn 1.2s ease-in-out;  /* Optional fade-in */
+}
+
+/* Optional fade-in effect */
+@keyframes fadeIn {
+  0% {opacity: 0; transform: translateY(-10px);}
+  100% {opacity: 1; transform: translateY(0);}
+}
+.homepage-container {
+  position: relative;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.welcome-msg {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #ffde59; /* bright yellow for highlight */
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeBounce 1s forwards;
+}
+
+/* Fade-in + bounce animation */
+@keyframes fadeBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(10px);
+  }
+  80% {
+    transform: translateY(-5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.img-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  overflow: hidden;
+  border-radius: 20px;
+  max-width: 500px;      /* reduce width for standard size */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.homepage-img {
+  width: 100%;
+  height: auto;
+  opacity: 0.85;
+  transition: transform 0.5s, opacity 0.5s;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.homepage-img:hover {
+  transform: scale(1.05);
+  opacity: 1;
+}

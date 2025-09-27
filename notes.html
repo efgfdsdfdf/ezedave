@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Companion - Notes</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="brand">Student Companion | Team Black 🖤</div>
+    <div>
+      <a href="index.html">Home</a>
+      <a href="notes.html">Notes</a>
+      <a href="timetable.html">Timetable</a>
+      <a href="gpa.html">GPA</a>
+      <a href="profile.html">Profile</a>
+      <a href="#" id="logoutBtn" onclick="logout()">Logout</a>
+    </div>
+  </nav>
+
+  <!-- Notes Section -->
+  <div class="container notes-container">
+    <h1>My Notes</h1>
+
+    <textarea id="noteInput" placeholder="Write your note here..." rows="10" style="width:100%; resize:vertical; padding:10px; font-size:16px;"></textarea>
+    <button id="addNoteBtn" style="margin-top:10px;">Add Note</button>
+
+    <ul id="notesList" style="margin-top:20px; list-style:none; padding:0;"></ul>
+  </div>
+
+  <footer>
+    <p>© 2025 Student Companion | Built by Team Black 🖤</p>
+    <p>powered by Ezeilo</p>
+  </footer>
+
+  <script>
+    // Make notes list dynamic with edit and delete buttons
+    function renderNotes() {
+      const notesList = document.getElementById("notesList");
+      if (!notesList) return;
+
+      const currentUser = localStorage.getItem("currentUser");
+      const users = JSON.parse(localStorage.getItem("users")) || {};
+      if (!users[currentUser]?.notes) users[currentUser] = { notes: [] };
+
+      notesList.innerHTML = "";
+      users[currentUser].notes.forEach((note, index) => {
+        const li = document.createElement("li");
+        li.style.display = "flex";
+        li.style.alignItems = "center";
+        li.style.justifyContent = "space-between";
+        li.style.background = "rgba(255,255,255,0.1)";
+        li.style.padding = "8px 10px";
+        li.style.marginBottom = "8px";
+        li.style.borderRadius = "6px";
+
+        const noteText = document.createElement("span");
+        noteText.textContent = note;
+        noteText.style.flex = "1";
+        noteText.style.marginRight = "10px";
+
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "✏️";
+        editBtn.style.fontSize = "14px";
+        editBtn.style.marginRight = "5px";
+        editBtn.onclick = () => {
+          const newNote = prompt("Edit your note:", note);
+          if (newNote !== null && newNote.trim() !== "") {
+            users[currentUser].notes[index] = newNote.trim();
+            localStorage.setItem("users", JSON.stringify(users));
+            renderNotes();
+          }
+        };
+
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "🗑";
+        delBtn.style.fontSize = "14px";
+        delBtn.onclick = () => {
+          users[currentUser].notes.splice(index, 1);
+          localStorage.setItem("users", JSON.stringify(users));
+          renderNotes();
+        };
+
+        li.appendChild(noteText);
+        li.appendChild(editBtn);
+        li.appendChild(delBtn);
+        notesList.appendChild(li);
+      });
+    }
+
+    document.getElementById("addNoteBtn")?.addEventListener("click", () => {
+      const noteInput = document.getElementById("noteInput");
+      const noteText = noteInput.value.trim();
+      if (!noteText) return;
+
+      const currentUser = localStorage.getItem("currentUser");
+      const users = JSON.parse(localStorage.getItem("users")) || {};
+      if (!users[currentUser]?.notes) users[currentUser] = { notes: [] };
+
+      users[currentUser].notes.push(noteText);
+      localStorage.setItem("users", JSON.stringify(users));
+      noteInput.value = "";
+      renderNotes();
+    });
+
+    window.addEventListener("DOMContentLoaded", renderNotes);
+  </script>
+</body>
+</html>
+
+
