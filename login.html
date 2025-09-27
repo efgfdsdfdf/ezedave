@@ -6,7 +6,6 @@
   <title>Student Companion - Login</title>
   
   <link rel="stylesheet" href="styles.css">
-  
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -23,10 +22,7 @@
       <h2>Login</h2>
       <input type="text" id="loginUsername" placeholder="Enter Username" required>
       <input type="password" id="loginPassword" placeholder="Enter Password" required>
-      <button onclick="login(
-        document.getElementById('loginUsername').value.trim(), 
-        document.getElementById('loginPassword').value.trim()
-      )">Login</button>
+      <button onclick="handleLogin()">Login</button>
     </div>
 
     <hr style="margin: 20px 0; border: 1px solid #fff;">
@@ -36,10 +32,7 @@
       <h2>Sign Up</h2>
       <input type="text" id="signupUsername" placeholder="Choose Username" required>
       <input type="password" id="signupPassword" placeholder="Choose Password" required>
-      <button onclick="signup(
-        document.getElementById('signupUsername').value.trim(), 
-        document.getElementById('signupPassword').value.trim()
-      )">Sign Up</button>
+      <button onclick="handleSignup()">Sign Up</button>
     </div>
   </div>
 
@@ -47,8 +40,50 @@
     <p>© 2025 Student Companion | Built by Team Black 🖤</p>
     <p>powered by Ezeilo</p>
   </footer>
+
+  <script>
+    // If user already logged in, redirect
+    if (localStorage.getItem("loggedInUser")) {
+      window.location.href = "profile.html";
+    }
+
+    function handleSignup() {
+      const username = document.getElementById("signupUsername").value.trim();
+      const password = document.getElementById("signupPassword").value.trim();
+
+      if (!username || !password) {
+        alert("Please enter both username and password.");
+        return;
+      }
+
+      // Save credentials in localStorage
+      localStorage.setItem("user_" + username, password);
+      alert("Account created successfully! You can now log in.");
+      
+      // Clear inputs
+      document.getElementById("signupUsername").value = "";
+      document.getElementById("signupPassword").value = "";
+    }
+
+    function handleLogin() {
+      const username = document.getElementById("loginUsername").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+
+      if (!username || !password) {
+        alert("Please enter both username and password.");
+        return;
+      }
+
+      const savedPassword = localStorage.getItem("user_" + username);
+
+      if (savedPassword && savedPassword === password) {
+        localStorage.setItem("loggedInUser", username);
+        alert("Login successful!");
+        window.location.href = "profile.html";
+      } else {
+        alert("Invalid username or password. Please try again.");
+      }
+    }
+  </script>
 </body>
 </html>
-
-
-
