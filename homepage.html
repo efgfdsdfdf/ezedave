@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Home | Student Companion</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="script.js" defer></script>
+</head>
+<body class="fade-in">
+  <nav class="navbar">
+    <div class="brand">Student Companion | Team Black 🖤</div>
+    <div class="nav-links">
+      <a href="homepage.html" class="active">Home</a>
+      <a href="notes.html">Notes</a>
+      <a href="timetable.html">Timetable</a>
+      <a href="gpa.html">GPA</a>
+      <a href="profile.html">Profile</a>
+      <a href="#" id="logoutBtn">Logout</a>
+    </div>
+  </nav>
+
+  <main class="container card">
+    <h1 id="welcomeMsg">Welcome 👋</h1>
+    <!-- Intro message -->
+  <div class="intro-message">
+    <p>
+      🎓 <b>Student Companion</b> helps you stay organized with your 
+      <span class="highlight">Notes</span>, 
+      <span class="highlight">Timetable</span>, and 
+      <span class="highlight">GPA tracker</span>.  
+      Keep track of your studies, get timely reminders, and monitor your academic progress all in one place!
+    </p>
+  </div>
+
+
+  <section class="dashboard-section">
+  <h2>📊 Your Progress</h2>
+
+  <div class="progress-stats">
+    <p>📝 Notes: <span id="notesCount">0</span></p>
+    <p>📅 Timetable: <span id="classCount">0</span></p>
+    <p>🎓 GPA Records: <span id="gpaCount">0</span></p>
+  </div>
+</section>
+
+    <!-- Notifications -->
+    <section class="dashboard-section">
+      <h2>📌 Notifications</h2>
+      <ul id="homeNotifications">
+        <li>No notifications yet.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Student Companion | Team Black 🖤</p>
+    <p>Powered by Ezeilo</p>
+  </footer>
+</body>
+</html>
+
+</html>
+
