@@ -1,66 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Companion - GPA Calculator</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GPA | Student Companion</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="auth.js"></script>
-  <script defer src="home.js"></script>
   <script src="script.js" defer></script>
 </head>
-<body>
+<body class="fade-in">
   <nav class="navbar">
     <div class="brand">Student Companion | Team Black 🖤</div>
-    <div>
-      <a href="index.html">Home</a>
+    <div class="nav-links">
+      <a href="homepage.html">Home</a>
       <a href="notes.html">Notes</a>
       <a href="timetable.html">Timetable</a>
-      <a href="gpa.html">GPA</a>
-      <a href="profile.html">PROFILE</a>
-      <a href="#" onclick="logout()">Logout</a>
+      <a href="gpa.html" class="active">GPA</a>
+      <a href="profile.html">Profile</a>
+      <a href="#" id="logoutBtn">Logout</a>
     </div>
   </nav>
 
-  <div class="container">
-    <h1>GPA Calculator</h1>
+  <main class="container card">
+    <h1>📊 GPA Calculator</h1>
 
-    <div class="gpa-form">
-      <input type="text" id="course" placeholder="Course Name">
-      <input type="number" id="unit" placeholder="Units">
-      <select id="grade">
-        <option value="5">A</option>
-        <option value="4">B</option>
-        <option value="3">C</option>
-        <option value="2">D</option>
-        <option value="0">F</option>
+    <form id="gpaForm">
+      <input id="courseName" type="text" placeholder="Course name (e.g. Physics 101)" required>
+      <select id="courseGrade" required>
+        <option value="">Select Grade</option>
+        <option value="A">A (5)</option>
+        <option value="B">B (4)</option>
+        <option value="C">C (3)</option>
+        <option value="D">D (2)</option>
+        <option value="E">E (1)</option>
+        <option value="F">F (0)</option>
       </select>
-      <button id="addCourseBtn">Add Course</button>
-    </div>
+      <input id="courseUnits" type="number" placeholder="Credit Units" min="0"  max="3" required>
 
-    <table id="gpaTable">
-      <thead>
-        <tr>
-          <th>Course</th>
-          <th>Grade</th>
-          <th>Units</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Courses will appear here -->
-      </tbody>
-    </table>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
+        <button type="submit" id="addCourseBtn" class="btn">➕ Add Course</button>
+        <button type="button" id="cancelCourseEditBtn" class="btn" style="display:none;background:#6c757d">Cancel Edit</button>
+      </div>
+    </form>
 
-    <h2 id="gpaResult">Your GPA: 0.00</h2>
-  </div>
+    <ul id="gpaList" style="margin-top:18px"></ul>
+
+    <h2 style="margin-top:20px">🎯 GPA: <span id="gpaResult">0.00</span></h2>
+  </main>
 
   <footer>
-    <p>© 2025 Student Companion | Built by Team Black 🖤</p>
-    <p>powered by Ezeilo</p>
+    <p>© 2025 Student Companion | Team Black 🖤</p>
+    <p>Powered by Ezeilo</p>
   </footer>
 </body>
 </html>
+
+
+
 
 
 
