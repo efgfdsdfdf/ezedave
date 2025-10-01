@@ -670,80 +670,47 @@ document.addEventListener("DOMContentLoaded", () => {
 // PROFILE PAGE JS
 // ==========================
 document.addEventListener("DOMContentLoaded", () => {
-  const currentUser = localStorage.getItem("currentUser");
-  if (!currentUser) return alert("No user logged in!");
+  const user = localStorage.getItem("currentUser") || localStorage.getItem("loggedInUser");
+  if (!user) {
+    alert("No user logged in!");
+    window.location.href = "index.html";
+    return;
+  }
 
-  let users = JSON.parse(localStorage.getItem("users")) || {};
-  if (!users[currentUser]) users[currentUser] = {};
+  const users = JSON.parse(localStorage.getItem("users")) || {};
+  if (!users[user]) users[user] = {};
 
-  // DOM elements
   const profileUsername = document.getElementById("profileUsername");
   const profilePic = document.getElementById("profilePic");
   const uploadBtn = document.getElementById("uploadBtn");
   const resetPicBtn = document.getElementById("resetPicBtn");
   const uploadPic = document.getElementById("uploadPic");
-  const logoutBtn = document.getElementById("logoutBtn");
 
-  const bioInput = document.getElementById("bio");
-  const hobbiesInput = document.getElementById("hobbies");
-  const goalsInput = document.getElementById("goals");
-  const favoritesInput = document.getElementById("favorites");
+  const bioText = document.getElementById("bioText");
+  const bioInput = document.getElementById("bioInput");
   const editBioBtn = document.getElementById("editBioBtn");
   const saveBioBtn = document.getElementById("saveBioBtn");
 
   // Display username
-  profileUsername.textContent = currentUser;
+  profileUsername.textContent = user;
 
-  // Load profile picture
-  if (users[currentUser].profilePic) profilePic.src = users[currentUser].profilePic;
+  // Display profile picture
+  profilePic.src = users[user].profilePic || "default-profile.png";
 
-  // Load bio fields
-  bioInput.value = users[currentUser].bio || "";
-  hobbiesInput.value = users[currentUser].hobbies || "";
-  goalsInput.value = users[currentUser].goals || "";
-  favoritesInput.value = users[currentUser].favorites || "";
+  // Display bio
+  bioText.textContent = users[user].bio || "Your bio goes here...";
+  bioInput.style.display = "none";
+  saveBioBtn.style.display = "none";
 
-  function setBioReadonly(readonly) {
-    bioInput.readOnly = readonly;
-    hobbiesInput.readOnly = readonly;
-    goalsInput.readOnly = readonly;
-    favoritesInput.readOnly = readonly;
-  }
-  setBioReadonly(true); // initially read-only
-
-  // Edit bio
-  editBioBtn.addEventListener("click", () => {
-    setBioReadonly(false);
-    bioInput.focus();
-    saveBioBtn.style.display = "inline-block";
-    editBioBtn.style.display = "none";
-  });
-
-  // Save bio
-  saveBioBtn.addEventListener("click", () => {
-    users[currentUser].bio = bioInput.value.trim();
-    users[currentUser].hobbies = hobbiesInput.value.trim();
-    users[currentUser].goals = goalsInput.value.trim();
-    users[currentUser].favorites = favoritesInput.value.trim();
-    localStorage.setItem("users", JSON.stringify(users));
-
-    setBioReadonly(true);
-    saveBioBtn.style.display = "none";
-    editBioBtn.style.display = "inline-block";
-    alert("Profile updated!");
-  });
-
-  // Upload picture
+  // Upload profile picture
   uploadBtn.addEventListener("click", () => uploadPic.click());
-
   uploadPic.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = () => {
       profilePic.src = reader.result;
-      users[currentUser].profilePic = reader.result;
+      users[user].profilePic = reader.result;
       localStorage.setItem("users", JSON.stringify(users));
     };
     reader.readAsDataURL(file);
@@ -752,18 +719,51 @@ document.addEventListener("DOMContentLoaded", () => {
   // Reset picture
   resetPicBtn.addEventListener("click", () => {
     profilePic.src = "default-profile.png";
-    users[currentUser].profilePic = "default-profile.png";
+    users[user].profilePic = "";
     localStorage.setItem("users", JSON.stringify(users));
   });
 
-  // Logout
-  logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("currentUser");
-    window.location.href = "index.html";
+  // Edit bio
+  editBioBtn.addEventListener("click", () => {
+    bioInput.value = users[user].bio || "";
+    bioText.style.display = "none";
+    bioInput.style.display = "block";
+    editBioBtn.style.display = "none";
+    saveBioBtn.style.display = "inline-block";
+
+    // Auto-adjust textarea height
+    bioInput.style.height = "auto";
+    bioInput.style.height = bioInput.scrollHeight + "px";
+    bioInput.focus();
+  });
+
+  // Save bio
+  saveBioBtn.addEventListener("click", () => {
+    const newBio = bioInput.value.trim() || "Your bio goes here...";
+    users[user].bio = newBio;
+    localStorage.setItem("users", JSON.stringify(users));
+
+    bioText.textContent = newBio;
+    bioText.style.display = "block";
+    bioInput.style.display = "none";
+    saveBioBtn.style.display = "none";
+    editBioBtn.style.display = "inline-block";
+  });
+
+  // Optional: auto-expand textarea while typing
+  bioInput.addEventListener("input", () => {
+    bioInput.style.height = "auto";
+    bioInput.style.height = bioInput.scrollHeight + "px";
   });
 });
-
-
+// Logout
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "index.html"; // redirect to login page
+    });
+  }
 
 
 // ================= HOMEPAGE ================= //
@@ -940,3 +940,4 @@ document.addEventListener("DOMContentLoaded", () => {
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) logoutBtn.addEventListener("click", logout);
 });
+
