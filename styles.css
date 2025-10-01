@@ -512,4 +512,87 @@ footer {
   transform: scale(1.05);
 }
 
+/* adjustable */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #121212;
+  color: #fff;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #1e1e1e;
+  flex-wrap: wrap; /* allows wrapping on small screens */
+}
+
+.nav-right a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 15px;
+}
+
+.nav-right {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.profile-container {
+  max-width: 800px;
+  width: 90%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+.bio-container {
+  margin-top: 20px;
+}
+
+#bioText, #bioInput {
+  width: 100%;
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background-color: #2a2a2a;
+  color: #fff;
+  resize: none;
+}
+/* Small screens: mobile phones */
+@media (max-width: 600px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-right a {
+    margin-left: 0;
+    margin-top: 5px;
+  }
+
+  .profile-pic {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-container {
+    padding: 15px;
+  }
+}
+
+/* Medium screens: tablets */
+@media (max-width: 900px) {
+  .profile-pic {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+
 
