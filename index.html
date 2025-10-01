@@ -3,59 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Companion - Home</title>
+  <title>Login | Student Companion</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="auth.js"></script>
-  <script defer src="home.js"></script>
-  <script src="script.js" defer></script>
 </head>
 <body>
-  <!-- Navbar -->
   <nav class="navbar">
-    <div class="brand">Student Companion | Built by Team Black 🖤</div>
-    <div>
-      <a href="index.html">Home</a>
-      <a href="notes.html">Notes</a>
-      <a href="timetable.html">Timetable</a>
-      <a href="gpa.html">GPA</a>
-      <a href="profile.html">PROFILE</a>
-      <span id="navUser"></span>
-      <a href="#" onclick="logout()">Logout</a>
+    <div class="nav-left">📘 Student Companion</div>
+    <div class="nav-right">
+      <a href="signup.html">Sign Up</a>
     </div>
   </nav>
 
-  <div class="homepage-container">
-    <h1>Welcome to Student Companion</h1>
-    <h2><p>Your all-in-one academic sidekick!.</p></h2>
-    <div class="welcome-message">
-    <div class="welcome-message">
-        Stay organized, track your GPA, manage your timetable, and never miss a beat. Let’s make your student life smarter and more productive!
+  <main class="container fade-in">
+    <h1>Welcome Back 👋</h1>
+    <p class="subtitle">LOG IN TO ACCESS YOUR, NOTES, TIMETABLE, CALCULATR YOUR GPA,AND MORE.</p>
+
+    <div class="card">
+      <input type="text" id="loginUser" placeholder="Username">
+      <input type="password" id="loginPass" placeholder="Password">
+      <button onclick="login(document.getElementById('loginUser').value, document.getElementById('loginPass').value)">Login</button>
     </div>
-  </div>
+  </main>
 
-  <img src="img/images.png" alt="TEAM BLACK" style="width:100%; max-height:400px; object-fit:cover; border-radius:12px; margin:20px 0;">
-
+  <script src="script.js"></script>
   <footer>
-    <p>© 2025 Student Companion | Built by Team Black 🖤</p>
-    <p>powered by Ezeilo</p>
+    <p>© 2025 Student Companion | Team Black 🖤</p>
+    <p>Powered by Ezeilo</p>
   </footer>
-
-  <script>
-    // Show logged-in username on homepage
-    window.addEventListener("DOMContentLoaded", () => {
-      const currentUser = localStorage.getItem("currentUser");
-      const navUser = document.getElementById("navUser");
-      const welcomeMsg = document.getElementById("welcomeMsg");
-      if (currentUser) {
-        if (navUser) navUser.textContent = "👋 " + currentUser;
-        if (welcomeMsg) welcomeMsg.textContent = `Welcome back, ${currentUser}! Your all-in-one academic assistant.`;
-      }
-    });
-  </script>
 </body>
 </html>
-
-
 
 
 
