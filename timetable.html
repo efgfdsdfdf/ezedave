@@ -1,54 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Companion - Timetable</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Timetable | Student Companion</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="auth.js"></script>
-  <script defer src="home.js"></script>
   <script src="script.js" defer></script>
 </head>
-<body>
-  <!-- Navbar -->
+<body class="fade-in">
   <nav class="navbar">
     <div class="brand">Student Companion | Team Black 🖤</div>
-    <div>
-      <a href="index.html">Home</a>
+    <div class="nav-links">
+      <a href="homepage.html">Home</a>
       <a href="notes.html">Notes</a>
-      <a href="timetable.html">Timetable</a>
+      <a href="timetable.html" class="active">Timetable</a>
       <a href="gpa.html">GPA</a>
       <a href="profile.html">Profile</a>
       <a href="#" id="logoutBtn">Logout</a>
-   
-      
     </div>
   </nav>
 
-  <!-- Timetable Section -->
-  <div class="container">
-    <h1>My Timetable</h1>
-    <input type="text" id="classCourse" placeholder="Course name" required>
-    <input type="time" id="classTime" required>
-    <select id="classDay"required>
-      <option value="" disabled selected>Select Day</option>
-      <option value="Monday">Monday</option>
-      <option value="Tuesday">Tuesday</option>
-      <option value="Wednesday">Wednesday</option>
-      <option value="Thursday">Thursday</option>
-      <option value="Friday">Friday</option>
-      <option value="Saturday">Saturday</option>
-      <option value="Sunday">Sunday</option>
-    </select>
-    <button id="addClassBtn">Add Class</button>
-    <ul id="timetableList"></ul>
-</div>
-  </div>
+  <main class="container card">
+    <h1>📅 My Timetable</h1>
 
- <footer>
-    <p>© 2025 Student Companion | Built by Team Black 🖤</p>
-    <p>powered by Ezeilo</p>
- </footer>
+    <form id="timetableForm">
+      <input id="classCourse" type="text" placeholder="Course name (e.g. Physics 101)" required>
+      <select id="classDay" required>
+        <option value="">Select Day</option>
+        <option value="Sunday">Sunday</option>
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+        <option value="Saturday">Saturday</option>
+      </select>
+      <input id="classTime" type="time" required>
+      <select id="notifyBefore">
+        <option value="5">Notify 5 minutes before</option>
+        <option value="10">Notify 10 minutes before</option>
+        <option value="20">Notify 20 minutes before</option>
+        <option value="30">Notify 30 minutes before</option>
+      </select>
+
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
+        <button type="submit" id="addClassBtn" class="btn">➕ Add Class</button>
+        <button type="button" id="cancelEditBtn" class="btn" style="display:none;background:#6c757d">Cancel Edit</button>
+      </div>
+    </form>
+
+    <ul id="timetableList" style="margin-top:18px"></ul>
+  </main>
+
+  <footer>
+    <p>© 2025 Student Companion | Team Black 🖤</p>
+    <p>Powered by Ezeilo </p>
+  </footer>
 </body>
 </html>
 
