@@ -3,138 +3,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile - Student Companion</title>
+  <title>Profile | Student Companion</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="auth.js"></script>
-  <script defer src="home.js"></script>
-  <script src="script.js" defer></script>
 </head>
-<body>
-  <script>
-  // Redirect to login if not logged in
-  if (!localStorage.getItem("loggedInUser")) {
-    window.location.href = "login.html";
-  }
-
-  function logout() {
-    localStorage.removeItem("loggedInUser");
-    window.location.href = "login.html";
-  }
-</script>
-
-<!-- Add logout button anywhere -->
-<button onclick="logout()">Logout</button>
+<body class="fade-in">
   <!-- Navbar -->
   <nav class="navbar">
-    <div class="brand">Student Companion | Team Black 🖤</div>
-    <div>
-      <a href="index.html">Home</a>
+    <div class="brand">📘 Student Companion</div>
+    <div class="nav-links">
+      <a href="homepage.html">Home</a>
       <a href="notes.html">Notes</a>
       <a href="timetable.html">Timetable</a>
       <a href="gpa.html">GPA</a>
-      <a href="profile.html">Profile</a>
-      <span id="navUser"></span>
-      <a href="#" onclick="logout()">Logout</a>
+      <a href="#" id="logoutBtn">Logout</a>
     </div>
   </nav>
 
   <!-- Profile Section -->
-  <main class="profile-container">
+  <main class="profile-container fade-in">
+    <h1>👤 My Profile</h1>
+    <p class="subtitle">Manage your personal info and profile picture.</p>
+
+    <!-- Username Display -->
+    <h2 id="profileUsername"></h2>
+
     <!-- Profile Picture -->
-    <img id="profilePic" src="images/default-avatar.png" alt="Profile Picture" class="profile-pic">
+    <img id="profilePic" src="default-profile.png" alt="Profile Picture" class="profile-pic">
+    <input type="file" id="uploadPic" accept="image/*" style="display:none;">
+    <button class="btn" id="uploadBtn">📸 Upload Picture</button>
+    <button class="btn delete-btn" id="resetPicBtn">♻️ Reset Picture</button>
 
-    <!-- Upload Picture -->
-    <input type="file" id="uploadPic" accept="image/*" style="display:none">
-    <button id="uploadBtn" class="btn">Upload New Picture</button>
+    <!-- Bio Section -->
+    <div class="bio-section">
+      <label>Bio:</label>
+      <textarea id="bio" readonly></textarea>
 
-    <!-- Username -->
-    <h2 id="profileName">Welcome, Student</h2>
+      <label>Hobbies:</label>
+      <textarea id="hobbies" readonly></textarea>
 
-    <!-- Reset Picture -->
-    <button id="resetPicBtn" class="btn">Reset to Default</button>
+      <label>Goals:</label>
+      <textarea id="goals" readonly></textarea>
 
-    <!-- Delete Account -->
-    <button id="deleteAccountBtn" class="btn delete-btn">🗑️ Delete My Data</button>
+      <label>Favorites:</label>
+      <textarea id="favorites" readonly></textarea>
+
+      <div style="margin-top:10px;">
+        <button class="btn" id="editBioBtn">✏️ Edit</button>
+        <button class="btn" id="saveBioBtn" style="display:none;">💾 Save</button>
+      </div>
+    </div>
   </main>
 
   <footer>
-    <p>© 2025 Student Companion | Built by Team Black 🖤</p>
-    <p>powered by Ezeilo</p>
+    <p>© 2025 Student Companion | Team Black 🖤</p>
+    <p>Powered by Ezeilo</p>
   </footer>
 
-  <script>
-    // Display logged-in user
-    window.addEventListener("DOMContentLoaded", () => {
-      const currentUser = localStorage.getItem("currentUser");
-      const navUser = document.getElementById("navUser");
-      const profileName = document.getElementById("profileName");
-      if (currentUser) {
-        if (navUser) navUser.textContent = "👋 " + currentUser;
-        if (profileName) profileName.textContent = `Welcome, ${currentUser}`;
-        
-        // Load profile pic from storage
-        let users = JSON.parse(localStorage.getItem("users")) || {};
-        if (users[currentUser]?.profilePic) {
-          document.getElementById("profilePic").src = users[currentUser].profilePic;
-        }
-      }
-    });
-
-    // Upload picture
-    document.getElementById("uploadBtn")?.addEventListener("click", () => {
-      document.getElementById("uploadPic").click();
-    });
-
-    document.getElementById("uploadPic")?.addEventListener("change", function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const imgData = event.target.result;
-        document.getElementById("profilePic").src = imgData;
-
-        const currentUser = localStorage.getItem("currentUser");
-        if (currentUser) {
-          let users = JSON.parse(localStorage.getItem("users")) || {};
-          users[currentUser].profilePic = imgData;
-          localStorage.setItem("users", JSON.stringify(users));
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // Reset picture
-    document.getElementById("resetPicBtn")?.addEventListener("click", function() {
-      const defaultPic = "images/default-avatar.png";
-      document.getElementById("profilePic").src = defaultPic;
-
-      const currentUser = localStorage.getItem("currentUser");
-      if (currentUser) {
-        let users = JSON.parse(localStorage.getItem("users")) || {};
-        users[currentUser].profilePic = defaultPic;
-        localStorage.setItem("users", JSON.stringify(users));
-      }
-    });
-
-    // Delete account
-    document.getElementById("deleteAccountBtn")?.addEventListener("click", () => {
-      const currentUser = localStorage.getItem("currentUser");
-      if (!currentUser) return alert("No user logged in.");
-
-      if (confirm("⚠️ Are you sure you want to delete ALL your data?")) {
-        let users = JSON.parse(localStorage.getItem("users")) || {};
-        delete users[currentUser];
-        localStorage.setItem("users", JSON.stringify(users));
-        localStorage.removeItem("currentUser");
-        alert("Your account and all data have been deleted.");
-        window.location.href = "login.html";
-      }
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
-
 
 
 
