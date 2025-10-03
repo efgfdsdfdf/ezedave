@@ -949,11 +949,41 @@ messaging.onMessage((payload) => {
   const body = (payload.notification && payload.notification.body) || "New update received!";
   const icon = (payload.notification && payload.notification.icon) || "/icon.png";
 
-  new Notification(title, {
-    body: body,
-    icon: icon
-  });
+  // ✅ Show as a system notification
+  new Notification(title, { body: body, icon: icon });
+
+  // ✅ Save notification in localStorage for homepage
+  const user = getCurrentUser();
+  if (user) {
+    let users = JSON.parse(localStorage.getItem("users")) || {};
+    if (!users[user].notifications) users[user].notifications = [];
+
+    users[user].notifications.push(`${title} - ${body}`);
+    localStorage.setItem("users", JSON.stringify(users));
+
+    // Refresh homepage notifications if user is on homepage
+    if (document.getElementById("homeNotifications")) {
+      updateNotifications();
+    }
+  }
 });
+navigator.serviceWorker.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "NEW_NOTIFICATION") {
+    const message = event.data.message;
+    const user = getCurrentUser();
+    if (user) {
+      let users = JSON.parse(localStorage.getItem("users")) || {};
+      if (!users[user].notifications) users[user].notifications = [];
+      users[user].notifications.push(message);
+      localStorage.setItem("users", JSON.stringify(users));
+
+      if (document.getElementById("homeNotifications")) {
+        updateNotifications();
+      }
+    }
+  }
+});
+
 
 
 
