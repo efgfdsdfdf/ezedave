@@ -940,4 +940,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) logoutBtn.addEventListener("click", logout);
 });
+// Request notification permission
+function requestPermission() {
+  Notification.requestPermission().then((permission) => {
+    if (permission === "granted") {
+      console.log("Notification permission granted.");
+
+      messaging.getToken({ vapidKey: "BHWjwl2zi4E9SSqkga8Q1udL2G98sXZScnr_PSz04zn0PlCLu33rPQdd7r2l_wQAcEa-iuu07TZukVt-WUvTaJo" })
+        .then((currentToken) => {
+          if (currentToken) {
+            console.log("FCM Token:", currentToken);
+            // Send this token to your server to send notifications later
+          } else {
+            console.log("No registration token available.");
+          }
+        });
+    }
+  });
+}
+
+requestPermission();
+
+// Handle foreground messages
+messaging.onMessage((payload) => {
+  console.log("Message received in foreground: ", payload);
+  new Notification(payload.notification.title, {
+    body: payload.notification.body,
+    icon: "icon.png"
+  });
+});
+
 
