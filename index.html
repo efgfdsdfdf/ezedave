@@ -26,11 +26,27 @@
   </main>
 
   <script src="script.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-messaging.js"></script>
+ <!-- Firebase App (core) -->
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
+
+<!-- Firebase Messaging -->
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-messaging.js"></script>
+
 <script>
+  // Your Firebase config from project settings
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
   // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
+
+  // Initialize Messaging
   const messaging = firebase.messaging();
 </script>
 
@@ -42,6 +58,7 @@
 </html>
 
 </html>
+
 
 
 
