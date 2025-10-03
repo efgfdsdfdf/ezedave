@@ -1,26 +1,29 @@
 // firebase-messaging-sw.js
-importScripts("https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js");
-importScripts("https://www.gstatic.com/firebasejs/9.6.10/firebase-messaging.js");
+
+importScripts("https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js");
 
 firebase.initializeApp({
   apiKey: "YOUR_API_KEY",
-  authDomain: "your-app.firebaseapp.com",
-  projectId: "your-app",
-  storageBucket: "your-app.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 });
 
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  console.log("Received background message ", payload);
+  console.log("Background message received: ", payload);
 
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: "/icon.png"
-  };
+  // ✅ Safely get data (avoid undefined)
+  const title = (payload.notification && payload.notification.title) || "Student Companion 📘";
+  const body = (payload.notification && payload.notification.body) || "You have a new notification!";
+  const icon = (payload.notification && payload.notification.icon) || "/icon.png";
 
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  self.registration.showNotification(title, {
+    body: body,
+    icon: icon
+  });
 });
