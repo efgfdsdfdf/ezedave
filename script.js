@@ -998,7 +998,7 @@ if ("serviceWorker" in navigator) {
   });
 }
 // Replace with your public VAPID key
-const publicVapidKey = "YOUR_PUBLIC_VAPID_KEY";
+const publicVapidKey = "BHWjwl2zi4E9SSqkga8Q1udL2G98sXZScnr_PSz04zn0PlCLu33rPQdd7r2l_wQAcEa-iuu07TZukVt-WUvTaJo";
 
 function requestNotificationPermission() {
   Notification.requestPermission().then(permission => {
@@ -1022,6 +1022,7 @@ function requestNotificationPermission() {
 }
 
 requestNotificationPermission();
+
 
 
 
