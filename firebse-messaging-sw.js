@@ -17,13 +17,21 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log("Background message received: ", payload);
 
-  // ✅ Safely get data (avoid undefined)
   const title = (payload.notification && payload.notification.title) || "Student Companion 📘";
   const body = (payload.notification && payload.notification.body) || "You have a new notification!";
   const icon = (payload.notification && payload.notification.icon) || "/icon.png";
 
-  self.registration.showNotification(title, {
-    body: body,
-    icon: icon
+  self.registration.showNotification(title, { body, icon });
+
+  // ✅ Save notification to IndexedDB/localStorage-like system
+  self.registration.getNotifications().then(() => {
+    self.clients.matchAll().then(clients => {
+      clients.forEach(client => {
+        client.postMessage({
+          type: "NEW_NOTIFICATION",
+          message: `${title} - ${body}`
+        });
+      });
+    });
   });
 });
