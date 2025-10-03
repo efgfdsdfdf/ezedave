@@ -997,6 +997,32 @@ if ("serviceWorker" in navigator) {
     console.log("✅ Service Worker registered!");
   });
 }
+// Replace with your public VAPID key
+const publicVapidKey = "YOUR_PUBLIC_VAPID_KEY";
+
+function requestNotificationPermission() {
+  Notification.requestPermission().then(permission => {
+    if (permission === "granted") {
+      messaging.getToken({ vapidKey: publicVapidKey })
+        .then((currentToken) => {
+          if (currentToken) {
+            console.log("FCM Token:", currentToken);
+            // 🔹 Send this token to your backend to save it for later use
+          } else {
+            console.log("No registration token available.");
+          }
+        })
+        .catch((err) => {
+          console.error("Error retrieving token:", err);
+        });
+    } else {
+      console.log("Notification permission denied.");
+    }
+  });
+}
+
+requestNotificationPermission();
+
 
 
 
