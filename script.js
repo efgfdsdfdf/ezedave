@@ -942,12 +942,16 @@ function requestPermission() {
 
 requestPermission();
 
-// Handle foreground messages
 messaging.onMessage((payload) => {
-  console.log("Message received in foreground: ", payload);
-  new Notification(payload.notification.title, {
-    body: payload.notification.body,
-    icon: "icon.png"
+  console.log("Foreground message received: ", payload);
+
+  const title = (payload.notification && payload.notification.title) || "Student Companion 📘";
+  const body = (payload.notification && payload.notification.body) || "New update received!";
+  const icon = (payload.notification && payload.notification.icon) || "/icon.png";
+
+  new Notification(title, {
+    body: body,
+    icon: icon
   });
 });
 
