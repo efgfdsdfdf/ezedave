@@ -864,6 +864,7 @@ function updateNotifications() {
 
   notificationsList.innerHTML = "";
 
+  // 🟢 If no timetable
   if (!data.timetable || data.timetable.length === 0) {
     notificationsList.innerHTML = "<li>No classes scheduled yet.</li>";
     return;
@@ -871,9 +872,9 @@ function updateNotifications() {
 
   const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   const today = days[new Date().getDay()];
-
   const todayClasses = data.timetable.filter(c => c.day === today);
 
+  // 🟢 If no classes today
   if (todayClasses.length === 0) {
     notificationsList.innerHTML = "<li>No classes today 🎉</li>";
     return;
@@ -883,59 +884,39 @@ function updateNotifications() {
   let hasUpcoming = false;
 
   todayClasses.forEach(cls => {
+    // 🔎 Defensive check so "undefined" won't show
+    const subject = cls.subject || "Unknown Class";
+    const time = cls.time || "??:??";
+
     if (!cls.time) return;
 
-    const [h, m] = cls.time.split(":").map(Number);
+    const [h, m] = time.split(":").map(Number);
     const classTime = new Date();
     classTime.setHours(h, m, 0);
 
-    // Calculate difference in minutes
     const diffMins = Math.floor((classTime - now) / 60000);
 
     if (diffMins > 0 && diffMins <= 60) {
-      const li = document.createElement("li");
-      li.textContent = `⏰ ${cls.subject} starts in ${diffMins} min`;
-      notificationsList.appendChild(li);
-      hasUpcoming = true;
+      const msg = `⏰ ${subject} starts in ${diffMins} min`;
 
-      // Trigger browser notification if permission granted
-      if ("Notification" in window && Notification.permission === "granted") {
-        new Notification(`Upcoming Class: ${cls.subject}`, {
-          body: `Starts in ${diffMins} minute(s)`,
-          icon: "default-profile.png" // optional icon
-        });
-      }
+      // 🟢 Show in homepage
+      const li = document.createElement("li");
+      li.textContent = msg;
+      notificationsList.appendChild(li);
+
+      // 🟢 Show as system notification
+      showLocalNotification(msg);
+
+      hasUpcoming = true;
     }
   });
 
+  // 🟢 If no upcoming classes
   if (!hasUpcoming) {
     notificationsList.innerHTML = "<li>No upcoming classes within the next hour.</li>";
   }
 }
 
-// Request permission for notifications on page load
-if ("Notification" in window) {
-  if (Notification.permission !== "granted") {
-    Notification.requestPermission();
-  }
-}
-
-// Call every minute to update dynamically
-setInterval(updateNotifications, 60000);
-updateNotifications();
-
-// ================= INIT ================= //
-document.addEventListener("DOMContentLoaded", () => {
-  if (document.getElementById("notesList")) loadNotes();
-  if (document.getElementById("timetableList")) loadTimetable();
-  if (document.getElementById("gpaList")) loadGPA();
-  if (document.getElementById("profileName")) loadProfile();
-  if (document.getElementById("welcomeMsg")) {
-    loadHomepage();
-    updateDashboard();
-    updateNotifications();
-    setInterval(updateNotifications, 60000); // auto-refresh notifications every 1 min
-  }
 
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) logoutBtn.addEventListener("click", logout);
@@ -969,5 +950,6 @@ messaging.onMessage((payload) => {
     icon: "icon.png"
   });
 });
+
 
 
