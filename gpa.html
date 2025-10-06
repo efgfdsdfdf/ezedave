@@ -5,152 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student GPA Calculator</title>
   <link rel="stylesheet" href="styles.css">
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #0d0d0d;
-      color: white;
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background-color: #111;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    header h1 {
-      color: #00ff99;
-      font-size: 22px;
-    }
-
-    #logoutBtn {
-      background: crimson;
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    main {
-      max-width: 600px;
-      margin: 30px auto;
-      background: #1a1a1a;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,255,153,0.3);
-    }
-
-    h2 {
-      text-align: center;
-      color: #00ff99;
-      margin-bottom: 20px;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    input, select {
-      padding: 10px;
-      border: 1px solid #333;
-      border-radius: 5px;
-      background: #222;
-      color: white;
-      outline: none;
-    }
-
-    input:focus, select:focus {
-      border-color: #00ff99;
-    }
-
-    #addCourseBtn, #cancelCourseEditBtn {
-      padding: 10px;
-      font-size: 16px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #addCourseBtn {
-      background: #00ff99;
-      color: black;
-    }
-
-    #cancelCourseEditBtn {
-      background: #ff3333;
-      color: white;
-      display: none;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin-top: 25px;
-    }
-
-    li {
-      background: #222;
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 5px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    li span {
-      flex: 1;
-      margin-right: 10px;
-    }
-
-    li button {
-      margin-left: 5px;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    li button:first-of-type {
-      background: #00ff99;
-      color: black;
-    }
-
-    li button:last-of-type {
-      background: #ff3333;
-      color: white;
-    }
-
-    #gpaDisplay {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 18px;
-    }
-
-    #gpaResult {
-      font-weight: bold;
-      color: #00ff99;
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      color: gray;
-      font-size: 14px;
-    }
-  </style>
 </head>
-
+ <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-left">📘 Student Companion</div>
+    <div class="nav-right">
+      <a href="homepage.html">Home</a>
+      <a href="notes.html">Notes</a>
+      <a href="timetable.html">Timetable</a>
+      <a href="gpa.html" class="active">GPA</a>
+      <a href="profile.html">Profile</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+  </nav>
 <body>
   <header>
     <h1>📘 GPA Calculator</h1>
@@ -160,10 +27,44 @@
   <main>
     <h2>Enter Your Course Details</h2>
 
-    <form
+    <form id="gpaForm">
+      <input type="text" id="courseName" placeholder="Course Name" required>
+      
+      <select id="courseGrade" required>
+        <option value="">Select Grade</option>
+        <option value="A">A (5 pts)</option>
+        <option value="B">B (4 pts)</option>
+        <option value="C">C (3 pts)</option>
+        <option value="D">D (2 pts)</option>
+        <option value="E">E (1 pt)</option>
+        <option value="F">F (0 pt)</option>
+      </select>
+      
+      <input type="number" id="courseUnits" placeholder="Course Units" min="1" required>
 
+      <button type="submit" id="addCourseBtn">➕ Add Course</button>
+      <button type="button" id="cancelCourseEditBtn">Cancel Edit</button>
+    </form>
 
+    <ul id="gpaList"></ul>
 
+    <div id="gpaDisplay">
+      Your GPA: <span id="gpaResult">0.00</span>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 Student Companion | All Rights Reserved
+  </footer>
+
+  <script src="gpa.js"></script>
+  
+  <footer>
+    <p>© 2025 Student Companion | Team Black 🖤</p>
+    <p>Powered by Ezeilo</p>
+  </footer>
+</body>
+</html>
 
 
 
