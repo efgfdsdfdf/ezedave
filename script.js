@@ -495,97 +495,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 // ================= GPA ================= //
-function addCourse() {
-  const user = getCurrentUser();
-  if (!user) return;
-
-  const course = document.getElementById("courseName").value;
-  const grade = document.getElementById("courseGrade").value;
-  const units = document.getElementById("courseUnits").value;
-
-  if (!course || !grade || !units) {
-    alert("Fill all fields!");
-    return;
-  }
-
-  let users = JSON.parse(localStorage.getItem("users"));
-  users[user].gpa.push({ course, grade, units: parseInt(units) });
-  localStorage.setItem("users", JSON.stringify(users));
-
-  document.getElementById("courseName").value = "";
-  document.getElementById("courseGrade").value = "";
-  document.getElementById("courseUnits").value = "";
-  loadGPA();
-}
-
-function loadGPA() {
-  const user = getCurrentUser();
-  if (!user) return;
-
-  let users = JSON.parse(localStorage.getItem("users"));
-  const gpaData = users[user].gpa || [];
-  const table = document.getElementById("gpaList");
-  if (!table) return;
-
-  table.innerHTML = "";
-  let totalPoints = 0, totalUnits = 0;
-
-  gpaData.forEach((c, index) => {
-    const points = getGradePoints(c.grade) * c.units;
-    totalPoints += points;
-    totalUnits += c.units;
-
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${c.course}</td>
-      <td>${c.grade}</td>
-      <td>${c.units}</td>
-      <td>
-        <button onclick="deleteCourse(${index})">Delete</button>
-      </td>
-    `;
-    table.appendChild(row);
-  });
-
-  document.getElementById("gpaResult").textContent =
-    totalUnits ? "Your GPA: " + (totalPoints / totalUnits).toFixed(2) : "No courses yet.";
-}
-
-function deleteCourse(index) {
-  const user = getCurrentUser();
-  let users = JSON.parse(localStorage.getItem("users"));
-  users[user].gpa.splice(index, 1);
-  localStorage.setItem("users", JSON.stringify(users));
-  loadGPA();
-}
-
-function getGradePoints(grade) {
-  const scale = { A: 5, B: 4, C: 3, D: 2, E: 1, F: 0 };
-  return scale[grade.toUpperCase()] || 0;
-}
-// Logout
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      localStorage.removeItem("loggedInUser");
-      window.location.href = "index.html"; // redirect to login page
-    });
-  }
-// === GPA FUNCTIONS ===
-
+// === GPA & COURSE MANAGEMENT ===
 let editingCourseIndex = null;
 
 // Convert grade letter to points
 function gradeToPoints(grade) {
-  switch (grade) {
-    case "A": return 5;
-    case "B": return 4;
-    case "C": return 3;
-    case "D": return 2;
-    case "E": return 1;
-    case "F": return 0;
-    default: return 0;
-  }
+  const scale = { A: 5, B: 4, C: 3, D: 2, E: 1, F: 0 };
+  return scale[grade.toUpperCase()] || 0;
 }
 
 // Add or update course
@@ -596,7 +512,7 @@ function addCourse(e) {
   if (!user) return;
 
   const name = document.getElementById("courseName").value.trim();
-  const grade = document.getElementById("courseGrade").value;
+  const grade = document.getElementById("courseGrade").value.trim().toUpperCase();
   const units = parseInt(document.getElementById("courseUnits").value);
 
   if (!name || !grade || !units) {
@@ -617,7 +533,6 @@ function addCourse(e) {
   }
 
   localStorage.setItem("users", JSON.stringify(users));
-
   document.getElementById("gpaForm").reset();
   loadGPA();
 }
@@ -647,11 +562,11 @@ function loadGPA() {
     `;
 
     const editBtn = document.createElement("button");
-    editBtn.textContent = "Edit";
+    editBtn.textContent = "✏️ Edit";
     editBtn.onclick = () => editCourse(index);
 
     const delBtn = document.createElement("button");
-    delBtn.textContent = "Delete";
+    delBtn.textContent = "🗑️ Delete";
     delBtn.onclick = () => deleteCourse(index);
 
     li.appendChild(editBtn);
@@ -661,7 +576,7 @@ function loadGPA() {
   });
 
   const gpaResult = totalUnits > 0 ? (totalPoints / totalUnits).toFixed(2) : "0.00";
-  document.getElementById("gpaResult").textContent = gpaResult;
+  document.getElementById("gpaResult").textContent = `Your GPA: ${gpaResult}`;
 }
 
 // Edit course
@@ -680,17 +595,12 @@ function editCourse(index) {
 }
 
 // Cancel editing
-document.addEventListener("DOMContentLoaded", () => {
-  const cancelBtn = document.getElementById("cancelCourseEditBtn");
-  if (cancelBtn) {
-    cancelBtn.addEventListener("click", () => {
-      editingCourseIndex = null;
-      document.getElementById("gpaForm").reset();
-      document.getElementById("addCourseBtn").textContent = "➕ Add Course";
-      cancelBtn.style.display = "none";
-    });
-  }
-});
+function cancelCourseEdit() {
+  editingCourseIndex = null;
+  document.getElementById("gpaForm").reset();
+  document.getElementById("addCourseBtn").textContent = "➕ Add Course";
+  document.getElementById("cancelCourseEditBtn").style.display = "none";
+}
 
 // Delete course
 function deleteCourse(index) {
@@ -701,14 +611,15 @@ function deleteCourse(index) {
   loadGPA();
 }
 
-// Attach form
+// === LOGOUT FUNCTION ===
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("gpaForm");
   if (form) form.addEventListener("submit", addCourse);
 
-  loadGPA();
-});
-// Logout
+  const cancelBtn = document.getElementById("cancelCourseEditBtn");
+  if (cancelBtn) cancelBtn.addEventListener("click", cancelCourseEdit);
+
+  const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -716,6 +627,10 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "index.html"; // redirect to login page
     });
   }
+
+  loadGPA();
+});
+
 
 // ==========================
 // PROFILE PAGE JS
@@ -1022,6 +937,7 @@ function requestNotificationPermission() {
 }
 
 requestNotificationPermission();
+
 
 
 
