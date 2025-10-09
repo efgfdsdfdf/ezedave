@@ -1,10 +1,12 @@
 {
   "name": "Student Companion",
   "short_name": "Companion",
-  "start_url": "homepage.html",
+  "description": "Your all-in-one student dashboard with GPA, Notes, Timetable & AI assistant",
+  "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#0d1117",
-  "theme_color": "#161b22",
+  "background_color": "#121212",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "icons/icon-192.png",
