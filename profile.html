@@ -1,61 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile | Student Companion</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Companion - Profile</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-left">📘 Student Companion</div>
-    <div class="nav-right">
-      <a href="homepage.html">Home</a>
-      <a href="timetable.html">Timetable</a>
-      <a href="notes.html">Notes</a>
-      <a href="gpa.html">GPA</a>
-      <a href="profile.html" class="active">Profile</a>
-      <a href="#" id="logoutBtn">Logout</a>
-    </div>
+<header>
+  <h1>Profile</h1>
+  <nav>
+    <a href="homepage.html">Dashboard</a>
+    <button onclick="logout()">Logout</button>
   </nav>
+</header>
 
-  <!-- Profile Section -->
-  <main class="profile-container fade-in">
-    <h1>👤 My Profile</h1>
-    <p class="subtitle">Manage your personal info and profile picture.</p>
+<main>
+  <section>
+    <h2>Profile Info</h2>
+    <img src="assets/default-profile.png" alt="Profile Picture" width="100">
+    <p>Username: <span id="profileUsername"></span></p>
+    <p>Other info coming soon...</p>
+  </section>
+</main>
 
-    <!-- Username Display -->
-    <h2 id="profileUsername"></h2>
-
-    <!-- Profile Picture -->
-    <img id="profilePic" src="default-profile.png" alt="Profile Picture" class="profile-pic">
-    <input type="file" id="uploadPic" accept="image/*" style="display:none;">
-    <button class="btn" id="uploadBtn">📸 Upload Picture</button>
-    <button class="btn delete-btn" id="resetPicBtn">♻️ Reset Picture</button>
-
-    <!-- Bio Section -->
-    <div class="bio-section">
-      <h3>📝 Bio</h3>
-      <p id="bioText" class="bio-text"></p>
-      <textarea id="bioInput" class="bio-input"></textarea>
-      <div style="margin-top:8px;">
-        <button class="btn" id="editBioBtn">✏️ Edit Bio</button>
-        <button class="btn" id="saveBioBtn">💾 Save Bio</button>
-      </div>
-    </div>
-  </main>
-
-  <footer>
-    <p>© 2025 Student Companion | Team Black 🖤</p>
-    <p>Powered by Ezeilo</p>
-  </footer>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const user = getCurrentUser();
+  if (!user) window.location.href = "index.html";
+  document.getElementById("profileUsername").textContent = user;
+});
+</script>
 </body>
 </html>
-
-
 
 
 
