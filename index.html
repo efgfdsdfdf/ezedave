@@ -1,40 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login | Student Companion</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Companion - Login</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-left">📘 Student Companion</div>
-    <div class="nav-right">
-      <a href="signup.html">Sign Up</a>
-    </div>
-  </nav>
-
-  <main class="container fade-in">
-    <h1>Welcome Back 👋</h1>
-    <p class="subtitle">LOG IN TO ACCESS NOTES, TIMETABLE, CALCULATE GPA, AND MORE.</p>
-
-    <div class="card login-card">
-      <input type="text" id="loginUser" placeholder="Username">
-      <input type="password" id="loginPass" placeholder="Password">
-      <button id="loginBtn">Login</button>
-      <p id="loginError" style="color:red; margin-top:10px;"></p>
-    </div>
-  </main>
-
-  <footer>
-    <p>© 2025 Student Companion | Team Black 🖤</p>
-    <p>Powered by Ezeilo</p>
-  </footer>
-
-  <script src="script.js"></script>
+<div class="container">
+  <h1>Student Companion</h1>
+  <form id="loginForm">
+    <input type="text" id="loginUsername" placeholder="Username" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <button type="submit">Login</button>
+  </form>
+  <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+</div>
+<script src="script.js"></script>
+<script>
+document.getElementById("loginForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  login(document.getElementById("loginUsername").value, document.getElementById("loginPassword").value);
+});
+</script>
 </body>
 </html>
-
 
 
 
