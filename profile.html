@@ -1,39 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Student Companion - Profile</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile | Student Companion</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-<header>
-  <h1>Profile</h1>
-  <nav>
-    <a href="homepage.html">Dashboard</a>
-    <button onclick="logout()">Logout</button>
-  </nav>
-</header>
+<body class="light-theme">
 
-<main>
-  <section>
-    <h2>Profile Info</h2>
-    <img src="assets/default-profile.png" alt="Profile Picture" width="100">
-    <p>Username: <span id="profileUsername"></span></p>
-    <p>Other info coming soon...</p>
-  </section>
-</main>
+  <header class="topbar">
+    <div class="brand">Student Companion — Team Black 🖤</div>
+    <nav class="topbar-actions">
+      <button id="theme-toggle">🌙</button>
+      <span id="user-greeting"></span>
+      <a href="home.html" class="btn">Home</a>
+      <a href="notes.html" class="btn">Notes</a>
+      <a href="timetable.html" class="btn">Timetable</a>
+      <a href="gpa.html" class="btn">GPA</a>
+      <a href="ai.html" class="btn">Black AI</a>
+      <a href="profile.html" class="btn">Profile</a>
+      <button id="logout-btn" class="btn">Logout</button>
+    </nav>
+  </header>
 
-<script src="script.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const user = getCurrentUser();
-  if (!user) window.location.href = "index.html";
-  document.getElementById("profileUsername").textContent = user;
-});
-</script>
+  <main class="container">
+    <h1>Profile</h1>
+    <p>Username: <span id="profile-username"></span></p>
+    <p>Email: <span id="profile-email">example@example.com</span></p>
+    <p>Profile picture placeholder:</p>
+    <div class="profile-pic">🖼️</div>
+  </main>
+
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>
+
 
 
 
