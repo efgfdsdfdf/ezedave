@@ -776,6 +776,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 600);
   });
 });
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").then(() => {
+    console.log("✅ Service Worker registered! App is now a PWA.");
+  });
+}
+Notification.requestPermission().then(permission => {
+  if(permission === "granted") console.log("Notifications enabled!");
+});
 
 
 //=========================================
@@ -967,6 +975,7 @@ async function getAIResponse(userText) {
   const data = await response.json();
   return data.reply; // assuming your API returns { reply: "..." }
 }
+
 
 
 
