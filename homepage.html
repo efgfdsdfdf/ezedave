@@ -1,64 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home | Student Companion</title>
-  <link rel="stylesheet" href="homepage.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Companion - Dashboard</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-left">📘 Student Companion</div>
-    <div class="nav-right">
-      <a href="notes.html">Notes</a>
-      <a href="timetable.html">Timetable</a>
-      <a href="gpa.html">GPA</a>
-      <a href="profile.html">Profile</a>
-      <a href="#" id="logoutBtn">Logout</a>
-    </div>
+<header>
+  <h1>Welcome, <span id="currentUserDisplay"></span>!</h1>
+  <nav>
+    <a href="profile.html">Profile</a>
+    <button onclick="logout()">Logout</button>
   </nav>
+</header>
 
-  <main class="container">
-    <h2 id="welcomeMsg">Welcome!</h2>
+<main>
+  <section id="notesSection">
+    <h2>Notes</h2>
+    <form id="noteForm">
+      <textarea id="noteInput" placeholder="Write a note..."></textarea>
+      <button id="saveNoteBtn" type="submit">💾 Save Note</button>
+      <button id="cancelNoteEditBtn" type="button">❌ Cancel</button>
+    </form>
+    <ul id="notesList"></ul>
+  </section>
 
-    <!-- Stats -->
-    <div class="stats">
-      <div class="stat-card">Notes: <span id="notesCount">0</span></div>
-      <div class="stat-card">Classes: <span id="classCount">0</span></div>
-      <div class="stat-card">GPA: <span id="gpaCount">0</span></div>
-    </div>
+  <section id="timetableSection">
+    <h2>Timetable</h2>
+    <form id="timetableForm">
+      <input type="text" id="classCourse" placeholder="Course Name" required>
+      <select id="classDay">
+        <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+        <option>Thursday</option><option>Friday</option><option>Saturday</option>
+      </select>
+      <input type="time" id="classTime" required>
+      <input type="number" id="notifyBefore" placeholder="Notify min before" min="0">
+      <button id="addClassBtn" type="submit">➕ Add Class</button>
+      <button id="cancelEditBtn" type="button">❌ Cancel</button>
+    </form>
+    <ul id="timetableList"></ul>
+  </section>
 
-    <!-- Progress Bar -->
-    <div class="progress-bar-container">
-      <div id="progressBar"></div>
-    </div>
-    <div id="progressText"></div>
+  <section id="gpaSection">
+    <h2>GPA Calculator</h2>
+    <p>Coming soon...</p>
+  </section>
 
-    <!-- Notifications -->
-    <div class="notifications">
-      <h3>Today's Notifications</h3>
-      <ul id="homeNotifications"></ul>
-    </div>
+  <section id="aiSection">
+    <h2>Black AI Assistant</h2>
+    <textarea id="aiInput" placeholder="Ask Black something..."></textarea>
+    <button onclick="askAI()">Send</button>
+    <div id="aiResponse"></div>
+  </section>
+</main>
 
-    <!-- AI Assistant -->
-    <div id="aiAssistant">
-      <h3>Black AI Assistant 🤖</h3>
-      <div class="ai-chatbox" id="aiChatbox"></div>
-      <form id="aiForm">
-        <input type="text" id="aiInput" placeholder="Ask me anything..." required>
-        <button type="submit">Send</button>
-      </form>
-    </div>
-  </main>
-
-  <footer>
-    <p>© 2025 Student Companion | Team Black 🖤</p>
-    <p>Powered by Ezeilo</p>
-  </footer>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const user = getCurrentUser();
+  if (!user) window.location.href = "index.html";
+  document.getElementById("currentUserDisplay").textContent = user;
+});
+</script>
 </body>
 </html>
+
 
 
 
