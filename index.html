@@ -16,47 +16,23 @@
 
   <main class="container fade-in">
     <h1>Welcome Back 👋</h1>
-    <p class="subtitle">LOG IN TO ACCESS YOUR, NOTES, TIMETABLE, CALCULATE YOUR GPA,AND MORE.</p>
+    <p class="subtitle">LOG IN TO ACCESS NOTES, TIMETABLE, CALCULATE GPA, AND MORE.</p>
 
-    <div class="card">
+    <div class="card login-card">
       <input type="text" id="loginUser" placeholder="Username">
       <input type="password" id="loginPass" placeholder="Password">
-      <button onclick="login(document.getElementById('loginUser').value, document.getElementById('loginPass').value)">Login</button>
+      <button id="loginBtn">Login</button>
+      <p id="loginError" style="color:red; margin-top:10px;"></p>
     </div>
   </main>
-
-  <script src="script.js"></script>
- <!-- Firebase App (core) -->
-<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
-
-<!-- Firebase Messaging -->
-<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-messaging.js"></script>
-
-<script>
-  // Your Firebase config from project settings
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-  };
-
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-
-  // Initialize Messaging
-  const messaging = firebase.messaging();
-</script>
 
   <footer>
     <p>© 2025 Student Companion | Team Black 🖤</p>
     <p>Powered by Ezeilo</p>
   </footer>
-</body>
-</html>
 
+  <script src="script.js"></script>
+</body>
 </html>
 
 
