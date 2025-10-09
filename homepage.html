@@ -4,13 +4,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Home | Student Companion</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="homepage.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="homepage.js" defer></script>
 </head>
-<body class="fade-in">
+
+<body class="app-bg">
+
+  <!-- Navbar -->
   <nav class="navbar">
-    <div class="brand">Student Companion | Team Black 🖤</div>
-    <div class="nav-links">
+    <div class="nav-left">📘 Student Companion</div>
+    <div class="nav-right">
       <a href="homepage.html" class="active">Home</a>
       <a href="notes.html">Notes</a>
       <a href="timetable.html">Timetable</a>
@@ -20,45 +24,47 @@
     </div>
   </nav>
 
-  <main class="container card">
-    <h1 id="welcomeMsg">Welcome 👋</h1>
-    <!-- Intro message -->
-  <div class="intro-message">
-    <p>
-      🎓 <b>Student Companion</b> helps you stay organized with your 
-      <span class="highlight">Notes</span>, 
-      <span class="highlight">Timetable</span>, and 
-      <span class="highlight">GPA tracker</span>.  
-      Keep track of your studies, get timely reminders, and monitor your academic progress all in one place!
-    </p>
-  </div>
+  <main class="container">
 
-
-  <section class="dashboard-section">
-  <h2>📊 Your Progress</h2>
-
-  <div class="progress-stats">
-    <p>📝 Notes: <span id="notesCount">0</span></p>
-    <p>📅 Timetable: <span id="classCount">0</span></p>
-    <p>🎓 GPA Records: <span id="gpaCount">0</span></p>
-  </div>
-</section>
-
-    <!-- Notifications -->
-    <section class="dashboard-section">
-      <h2>📌 Notifications</h2>
-      <ul id="homeNotifications">
-        <li>No notifications yet.</li>
-      </ul>
+    <!-- Greeting Section -->
+    <section class="card" id="welcomeSection">
+      <h1>👋 Welcome, <span id="usernameDisplay">Student</span>!</h1>
+      <p>Your all-in-one academic companion to manage GPA, notes, and schedules — now with AI assistance by <strong>Black</strong>.</p>
     </section>
+
+    <!-- Quick Access Section -->
+    <section class="card" id="quickLinks">
+      <h2>🚀 Quick Access</h2>
+      <div class="quick-buttons">
+        <a href="gpa.html" class="btn">📊 GPA</a>
+        <a href="notes.html" class="btn">📝 Notes</a>
+        <a href="timetable.html" class="btn">📅 Timetable</a>
+        <a href="profile.html" class="btn">👤 Profile</a>
+      </div>
+    </section>
+
+    <!-- AI Assistant Section -->
+    <section class="ai-assistant card" id="aiAssistant">
+      <h2>🤖 Black — Your AI Assistant</h2>
+      
+      <div id="aiChatBox" class="ai-chat-box"></div>
+
+      <form id="aiForm">
+        <input type="text" id="aiInput" placeholder="Ask me anything..." autocomplete="off" required />
+        <button type="submit" class="btn">Send</button>
+      </form>
+    </section>
+
   </main>
 
+  <!-- Footer -->
   <footer>
     <p>© 2025 Student Companion | Team Black 🖤</p>
     <p>Powered by Ezeilo</p>
   </footer>
 </body>
 </html>
+
 
 
 
