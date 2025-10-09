@@ -1,55 +1,42 @@
-// ================= USER MANAGEMENT ================= //
+// ================= AUTH =================
 function getCurrentUser() {
-  return localStorage.getItem("currentUser");
+  return localStorage.getItem("currentUser") || null;
 }
 
+// Signup
 function signup(username, password) {
-  if (!username || !password) {
-    alert("Please fill all fields!");
-    return;
-  }
+  if (!username || !password) return alert("Please fill all fields!");
+
   let users = JSON.parse(localStorage.getItem("users")) || {};
-  if (users[username]) {
-    alert("User already exists!");
-    return;
-  }
+  if (users[username]) return alert("User already exists!");
+
   users[username] = { password, notes: [], timetable: [], gpa: [], profile: {} };
   localStorage.setItem("users", JSON.stringify(users));
+
   alert("Account created! Please login.");
   window.location.href = "index.html";
 }
 
+// Login
 function login(username, password) {
   let users = JSON.parse(localStorage.getItem("users")) || {};
   if (users[username] && users[username].password === password) {
     localStorage.setItem("currentUser", username);
-    alert("Login successful!");
     window.location.href = "homepage.html";
   } else {
     alert("Invalid username or password.");
   }
 }
 
+// Logout
 function logout() {
   localStorage.removeItem("currentUser");
   window.location.href = "index.html";
 }
 
-/* =========================
-   Notes Module (Add / Edit / Delete)
-   Paste this into your script.js (replace old notes code)
-   ========================= */
-
-(function () {
-  // internal state
-  let editingIndex = -1; // -1 when creating, >=0 when editing
-
-  // helpers
-  function getCurrentUser() {
-    return localStorage.getItem("currentUser")
-        || localStorage.getItem("loggedInUser")
-        || null;
-  }
+// ================= NOTES =================
+const NotesModule = (() => {
+  let editingIndex = -1;
 
   function getUsers() {
     return JSON.parse(localStorage.getItem("users") || "{}");
@@ -58,25 +45,19 @@ function logout() {
     localStorage.setItem("users", JSON.stringify(users));
   }
 
-  // DOM elements (resolved at runtime)
   function els() {
     return {
       noteInput: document.getElementById("noteInput"),
       saveBtn: document.getElementById("saveNoteBtn") || document.getElementById("addNoteBtn"),
       cancelBtn: document.getElementById("cancelNoteEditBtn"),
       notesList: document.getElementById("notesList"),
-      noteForm: document.getElementById("noteForm") // optional
+      noteForm: document.getElementById("noteForm")
     };
   }
 
-  // render the user's notes list
   function renderNotes() {
     const { notesList } = els();
-    if (!notesList) {
-      console.warn("Notes: #notesList not found in DOM.");
-      return;
-    }
-
+    if (!notesList) return;
     const user = getCurrentUser();
     if (!user) {
       notesList.innerHTML = "<li>Please log in to manage notes.</li>";
@@ -101,7 +82,6 @@ function logout() {
       li.style.gap = "8px";
 
       const textDiv = document.createElement("div");
-      // preserve newlines in display
       textDiv.innerHTML = (String(noteText)).replace(/\n/g, "<br>");
       textDiv.style.flex = "1";
       textDiv.style.textAlign = "left";
@@ -116,7 +96,6 @@ function logout() {
 
       const delBtn = document.createElement("button");
       delBtn.textContent = "🗑️ Delete";
-      delBtn.className = "delete-btn";
       delBtn.onclick = () => {
         if (!confirm("Delete this note?")) return;
         deleteNote(i);
@@ -131,7 +110,6 @@ function logout() {
     });
   }
 
-  // start editing -> copy note text into textarea, toggle button
   function startEdit(index) {
     const { noteInput, saveBtn, cancelBtn } = els();
     const user = getCurrentUser();
@@ -139,950 +117,208 @@ function logout() {
 
     const users = getUsers();
     const notes = users[user]?.notes || [];
-    if (!notes[index]) return console.warn("startEdit: invalid index", index);
+    if (!notes[index]) return;
 
     noteInput.value = notes[index];
     editingIndex = index;
 
-    if (saveBtn) saveBtn.textContent = "🔁 Update Note";
-    if (cancelBtn) cancelBtn.style.display = "inline-block";
-
+    saveBtn.textContent = "🔁 Update Note";
+    cancelBtn.style.display = "inline-block";
     noteInput.focus();
-    // move cursor to end
     noteInput.selectionStart = noteInput.selectionEnd = noteInput.value.length;
   }
 
-  // cancel edit
   function cancelEdit() {
     const { noteInput, saveBtn, cancelBtn } = els();
     editingIndex = -1;
-    if (noteInput) noteInput.value = "";
-    if (saveBtn) saveBtn.textContent = "💾 Save Note";
-    if (cancelBtn) cancelBtn.style.display = "none";
+    noteInput.value = "";
+    saveBtn.textContent = "💾 Save Note";
+    cancelBtn.style.display = "none";
   }
 
-  // save (create or update)
   function handleSave(e) {
-    if (e && e.preventDefault) e.preventDefault();
-
-    const { noteInput, saveBtn } = els();
-    if (!noteInput) return console.warn("Notes: #noteInput not found.");
-
-    const text = noteInput.value.trim();
-    if (!text) {
-      alert("Please type a note before saving.");
-      return;
-    }
+    e?.preventDefault();
+    const { noteInput, saveBtn, cancelBtn } = els();
+    if (!noteInput.value.trim()) return alert("Please type a note before saving.");
 
     const user = getCurrentUser();
-    if (!user) {
-      alert("Please login to save notes.");
-      return;
-    }
+    if (!user) return alert("Please login to save notes.");
 
     const users = getUsers();
-    if (!users[user]) users[user] = { password: "", notes: [], timetable: [], gpa: [], profile: {} };
-    if (!Array.isArray(users[user].notes)) users[user].notes = [];
+    if (!users[user].notes) users[user].notes = [];
 
     if (editingIndex === -1) {
-      users[user].notes.push(text);
-      console.log("Notes: added note for", user);
+      users[user].notes.push(noteInput.value.trim());
     } else {
-      users[user].notes[editingIndex] = text;
-      console.log("Notes: updated note index", editingIndex, "for", user);
+      users[user].notes[editingIndex] = noteInput.value.trim();
       editingIndex = -1;
-      if (saveBtn) saveBtn.textContent = "💾 Save Note";
+      saveBtn.textContent = "💾 Save Note";
     }
 
     saveUsers(users);
-    if (noteInput) noteInput.value = "";
-    if (els().cancelBtn) els().cancelBtn.style.display = "none";
-
+    noteInput.value = "";
+    cancelBtn.style.display = "none";
     renderNotes();
-    // try to update dashboard if function exists
-    try { if (typeof updateDashboard === "function") updateDashboard(); } catch (e) { /* no-op */ }
   }
 
-  // delete
   function deleteNote(index) {
     const user = getCurrentUser();
-    if (!user) return;
     const users = getUsers();
-    if (!users[user] || !Array.isArray(users[user].notes)) return;
     users[user].notes.splice(index, 1);
     saveUsers(users);
-
-    // if deleting note currently being edited, cancel edit
     if (editingIndex === index) cancelEdit();
-    // if deleting earlier item, adjust editingIndex
-    if (editingIndex > index) editingIndex--;
-
     renderNotes();
-    try { if (typeof updateDashboard === "function") updateDashboard(); } catch (e) {}
   }
 
-  // init: attach handlers
   function init() {
     const { noteInput, saveBtn, cancelBtn, noteForm } = els();
-
-    // attach to form submit if present, else button click
-    if (noteForm) {
-      noteForm.addEventListener("submit", handleSave);
-    } else if (saveBtn) {
-      // make sure saveBtn doesn't submit a form accidentally
+    if (noteForm) noteForm.addEventListener("submit", handleSave);
+    else if (saveBtn) {
       saveBtn.type = "button";
       saveBtn.addEventListener("click", handleSave);
-    } else {
-      // fallback: try to find any button with Save Note text
-      const possible = Array.from(document.querySelectorAll("button")).find(b => /save note|add note/i.test(b.textContent));
-      if (possible) possible.addEventListener("click", handleSave);
     }
 
-    // Cancel edit button (optional)
     if (cancelBtn) {
       cancelBtn.type = "button";
       cancelBtn.addEventListener("click", cancelEdit);
       cancelBtn.style.display = "none";
     }
 
-    // Allow Ctrl+Enter to save
     if (noteInput) {
-      noteInput.addEventListener("keydown", (ev) => {
-        if (ev.key === "Enter" && (ev.ctrlKey || ev.metaKey)) {
-          ev.preventDefault();
-          handleSave();
-        }
+      noteInput.addEventListener("keydown", e => {
+        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) handleSave();
       });
     }
 
-    // initial render
     renderNotes();
-    console.log("Notes module initialized.");
   }
 
   document.addEventListener("DOMContentLoaded", init);
-
-  // expose for debugging
-  window.__notes = {
-    renderNotes,
-    startEdit,
-    deleteNote,
-    handleSave,
-    cancelEdit
-  };
+  return { renderNotes, startEdit, deleteNote, handleSave, cancelEdit };
 })();
 
+// ================= TIMETABLE =================
+const TimetableModule = (() => {
+  let editingIndex = null;
 
+  function addClass(e) {
+    e.preventDefault();
+    const user = getCurrentUser();
+    if (!user) return;
 
-// ================= TIMETABLE ================= //
-// === TIMETABLE FUNCTIONS ===
+    const course = document.getElementById("classCourse").value.trim();
+    const day = document.getElementById("classDay").value;
+    const time = document.getElementById("classTime").value;
+    const notifyBefore = parseInt(document.getElementById("notifyBefore").value || "0");
 
-let editingIndex = null;
+    if (!course || !day || !time) return alert("Please fill in all fields.");
 
-// Save timetable class
-function addClass(e) {
-  e.preventDefault();
+    let users = JSON.parse(localStorage.getItem("users")) || {};
+    if (!users[user].timetable) users[user].timetable = [];
 
-  const user = getCurrentUser();
-  if (!user) return;
-
-  const course = document.getElementById("classCourse").value.trim();
-  const day = document.getElementById("classDay").value;
-  const time = document.getElementById("classTime").value;
-  const notifyBefore = parseInt(document.getElementById("notifyBefore").value);
-
-  if (!course || !day || !time) {
-    alert("Please fill in all fields.");
-    return;
-  }
-
-  let users = JSON.parse(localStorage.getItem("users")) || {};
-  if (!users[user].timetable) users[user].timetable = [];
-
-  if (editingIndex === null) {
-    // Add new
-    users[user].timetable.push({ course, day, time, notifyBefore });
-  } else {
-    // Update existing
-    users[user].timetable[editingIndex] = { course, day, time, notifyBefore };
-    editingIndex = null;
-    document.getElementById("addClassBtn").textContent = "➕ Add Class";
-    document.getElementById("cancelEditBtn").style.display = "none";
-  }
-
-  localStorage.setItem("users", JSON.stringify(users));
-
-  // Reset form
-  document.getElementById("timetableForm").reset();
-
-  loadTimetable();
-}
-
-// Load timetable classes
-function loadTimetable() {
-  const user = getCurrentUser();
-  if (!user) return;
-
-  let users = JSON.parse(localStorage.getItem("users")) || {};
-  const timetable = users[user].timetable || [];
-
-  const list = document.getElementById("timetableList");
-  if (!list) return;
-
-  list.innerHTML = "";
-  timetable.forEach((item, index) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <span><b>${item.course}</b> - ${item.day}, ${item.time} (⏰ ${item.notifyBefore} min before)</span>
-    `;
-
-    // Edit button
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "Edit";
-    editBtn.onclick = () => editClass(index);
-
-    // Delete button
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "Delete";
-    delBtn.onclick = () => deleteClass(index);
-
-    li.appendChild(editBtn);
-    li.appendChild(delBtn);
-
-    list.appendChild(li);
-
-    // Schedule notification
-    scheduleNotification(item.course, item.day, item.time, item.notifyBefore);
-  });
-}
-
-// Edit class
-function editClass(index) {
-  const user = getCurrentUser();
-  let users = JSON.parse(localStorage.getItem("users"));
-  const item = users[user].timetable[index];
-
-  document.getElementById("classCourse").value = item.course;
-  document.getElementById("classDay").value = item.day;
-  document.getElementById("classTime").value = item.time;
-  document.getElementById("notifyBefore").value = item.notifyBefore;
-
-  editingIndex = index;
-  document.getElementById("addClassBtn").textContent = "Update Class";
-  document.getElementById("cancelEditBtn").style.display = "inline-block";
-}
-
-// Cancel editing
-document.addEventListener("DOMContentLoaded", () => {
-  const cancelBtn = document.getElementById("cancelEditBtn");
-  if (cancelBtn) {
-    cancelBtn.addEventListener("click", () => {
+    if (editingIndex === null) users[user].timetable.push({ course, day, time, notifyBefore });
+    else {
+      users[user].timetable[editingIndex] = { course, day, time, notifyBefore };
       editingIndex = null;
-      document.getElementById("timetableForm").reset();
       document.getElementById("addClassBtn").textContent = "➕ Add Class";
-      cancelBtn.style.display = "none";
+      document.getElementById("cancelEditBtn").style.display = "none";
+    }
+
+    localStorage.setItem("users", JSON.stringify(users));
+    document.getElementById("timetableForm").reset();
+    loadTimetable();
+  }
+
+  function loadTimetable() {
+    const user = getCurrentUser();
+    if (!user) return;
+    const users = JSON.parse(localStorage.getItem("users")) || {};
+    const timetable = users[user].timetable || [];
+    const list = document.getElementById("timetableList");
+    if (!list) return;
+    list.innerHTML = "";
+
+    timetable.forEach((item, index) => {
+      const li = document.createElement("li");
+      li.innerHTML = `<b>${item.course}</b> - ${item.day}, ${item.time} (⏰ ${item.notifyBefore} min before)`;
+
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "Edit";
+      editBtn.onclick = () => editClass(index);
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "Delete";
+      delBtn.onclick = () => deleteClass(index);
+
+      li.appendChild(editBtn);
+      li.appendChild(delBtn);
+      list.appendChild(li);
+
+      scheduleNotification(item.course, item.day, item.time, item.notifyBefore);
     });
   }
-});
 
-// Delete class
-function deleteClass(index) {
-  const user = getCurrentUser();
-  let users = JSON.parse(localStorage.getItem("users"));
-  users[user].timetable.splice(index, 1);
-  localStorage.setItem("users", JSON.stringify(users));
-  loadTimetable();
-}
+  function editClass(index) {
+    const user = getCurrentUser();
+    let users = JSON.parse(localStorage.getItem("users"));
+    const item = users[user].timetable[index];
 
-// Schedule notifications
-function scheduleNotification(course, day, time, notifyBefore) {
-  if (!("Notification" in window)) return;
+    document.getElementById("classCourse").value = item.course;
+    document.getElementById("classDay").value = item.day;
+    document.getElementById("classTime").value = item.time;
+    document.getElementById("notifyBefore").value = item.notifyBefore;
 
-  Notification.requestPermission().then(permission => {
-    if (permission === "granted") {
+    editingIndex = index;
+    document.getElementById("addClassBtn").textContent = "Update Class";
+    document.getElementById("cancelEditBtn").style.display = "inline-block";
+  }
+
+  function deleteClass(index) {
+    const user = getCurrentUser();
+    let users = JSON.parse(localStorage.getItem("users"));
+    users[user].timetable.splice(index, 1);
+    localStorage.setItem("users", JSON.stringify(users));
+    loadTimetable();
+  }
+
+  function scheduleNotification(course, day, time, notifyBefore) {
+    if (!("Notification" in window)) return;
+    Notification.requestPermission().then(permission => {
+      if (permission !== "granted") return;
+
       const [hours, minutes] = time.split(":").map(Number);
       const classDate = new Date();
-
       const daysOfWeek = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-      const today = classDate.getDay();
-      const targetDay = daysOfWeek.indexOf(day);
-      let diff = targetDay - today;
+      let diff = daysOfWeek.indexOf(day) - classDate.getDay();
       if (diff < 0) diff += 7;
 
       classDate.setDate(classDate.getDate() + diff);
       classDate.setHours(hours, minutes, 0, 0);
 
-      const notifyTime = classDate.getTime() - notifyBefore * 60000;
-      const delay = notifyTime - Date.now();
-
-      // Show in homepage notifications
-      const list = document.getElementById("homeNotifications");
-      if (list) {
-        const li = document.createElement("li");
-        li.textContent = `⏰ ${course} at ${time} on ${day} (reminder ${notifyBefore} min before)`;
-        list.appendChild(li);
-      }
-
-      // Send real notification
-      if (delay > 0) {
-        setTimeout(() => {
-          if (navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({
-              title: "Class Reminder",
-              body: `${course} starts at ${time} on ${day}. Get ready!`
-            });
-          } else {
-            new Notification("Class Reminder", {
-              body: `${course} starts at ${time} on ${day}. Get ready!`,
-              icon: "📘"
-            });
-          }
-        }, delay);
-      }
-    }
-  });
-}
-function loadTodayNotifications() {
-  const user = getCurrentUser();
-  if (!user) return;
-
-  const users = JSON.parse(localStorage.getItem("users")) || {};
-  const data = users[user] || { timetable: [] };
-
-  const notifList = document.getElementById("homeNotifications");
-  if (!notifList) return;
-
-  notifList.innerHTML = "";
-
-  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  const today = days[new Date().getDay()];
-
-  // Get today’s classes
-  const todayClasses = data.timetable.filter(c => c.day === today);
-
-  if (todayClasses.length === 0) {
-    notifList.innerHTML = "<li>No classes today 🎉</li>";
-    return;
-  }
-
-  todayClasses.forEach(cls => {
-    if (!cls.time) return;
-
-    // Add to homepage
-    const li = document.createElement("li");
-    li.textContent = `📘 ${cls.subject} at ${cls.time}`;
-    notifList.appendChild(li);
-
-    // Schedule reminder 30 minutes before
-    scheduleNotification(cls.subject, cls.day, cls.time, 30);
-  });
-}
-
-// Attach form submit
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("timetableForm");
-  if (form) form.addEventListener("submit", addClass);
-
-  loadTimetable();
-});
-// Logout
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      localStorage.removeItem("loggedInUser");
-      window.location.href = "index.html"; // redirect to login page
+      const delay = classDate.getTime() - notifyBefore * 60000 - Date.now();
+      if (delay > 0) setTimeout(() => {
+        new Notification("Class Reminder", { body: `${course} starts at ${time} on ${day}`, icon: "default-profile.png" });
+      }, delay);
     });
   }
 
-// ====== GPA Calculator ======
-const gpaForm = document.getElementById('gpaForm');
-const courseNameInput = document.getElementById('courseName');
-const courseGradeInput = document.getElementById('courseGrade');
-const courseUnitsInput = document.getElementById('courseUnits');
-const gpaList = document.getElementById('gpaList');
-const gpaResult = document.getElementById('gpaResult');
-const cancelEditBtn = document.getElementById('cancelCourseEditBtn');
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("timetableForm");
+    if (form) form.addEventListener("submit", addClass);
 
-let courses = JSON.parse(localStorage.getItem('courses')) || [];
-let editIndex = null;
-
-// Map letter grades to numeric points
-const gradePoints = { A: 5, B: 4, C: 3, D: 2, E: 1, F: 0 };
-
-// ====== Render Courses ======
-function renderCourses() {
-  gpaList.innerHTML = '';
-  courses.forEach((course, index) => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <strong>${course.name}</strong> - Grade: ${course.grade} (${gradePoints[course.grade]}) - Units: ${course.units}
-      <button onclick="editCourse(${index})" class="btn" style="background:#ffc107;margin-left:5px;">✏️</button>
-      <button onclick="deleteCourse(${index})" class="btn" style="background:#dc3545;margin-left:5px;">🗑️</button>
-    `;
-    gpaList.appendChild(li);
-  });
-  calculateGPA();
-}
-
-// ====== Calculate GPA ======
-function calculateGPA() {
-  if (courses.length === 0) {
-    gpaResult.textContent = '0.00';
-    return;
-  }
-  let totalPoints = 0, totalUnits = 0;
-  courses.forEach(c => {
-    totalPoints += gradePoints[c.grade] * c.units;
-    totalUnits += c.units;
-  });
-  const gpa = totalPoints / totalUnits;
-  gpaResult.textContent = gpa.toFixed(2);
-}
-
-// ====== Add or Edit Course ======
-gpaForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const name = courseNameInput.value.trim();
-  const grade = courseGradeInput.value;
-  const units = parseInt(courseUnitsInput.value);
-
-  if (!name || !grade || !units) return;
-
-  if (editIndex !== null) {
-    courses[editIndex] = { name, grade, units };
-    editIndex = null;
-    cancelEditBtn.style.display = 'none';
-  } else {
-    courses.push({ name, grade, units });
-  }
-
-  localStorage.setItem('courses', JSON.stringify(courses));
-  gpaForm.reset();
-  renderCourses();
-});
-
-// ====== Edit Course ======
-function editCourse(index) {
-  const course = courses[index];
-  courseNameInput.value = course.name;
-  courseGradeInput.value = course.grade;
-  courseUnitsInput.value = course.units;
-  editIndex = index;
-  cancelEditBtn.style.display = 'inline-block';
-}
-
-// ====== Cancel Edit ======
-cancelEditBtn.addEventListener('click', () => {
-  gpaForm.reset();
-  editIndex = null;
-  cancelEditBtn.style.display = 'none';
-});
-
-// ====== Delete Course ======
-function deleteCourse(index) {
-  if (confirm(`Delete ${courses[index].name}?`)) {
-    courses.splice(index, 1);
-    localStorage.setItem('courses', JSON.stringify(courses));
-    renderCourses();
-  }
-}
-
-// ====== Initial Render ======
-renderCourses();
-
-// ====== Logout Button ======
-const logoutBtn = document.getElementById('logoutBtn');
-logoutBtn.addEventListener('click', () => {
-  localStorage.clear();
-  alert('You have been logged out!');
-  window.location.href = 'homepage.html';
-});
-
-
-// ==========================
-// PROFILE PAGE JS
-// ==========================
-document.addEventListener("DOMContentLoaded", () => {
-  const user = localStorage.getItem("currentUser") || localStorage.getItem("loggedInUser");
-  if (!user) {
-    alert("No user logged in!");
-    window.location.href = "index.html";
-    return;
-  }
-
-  const users = JSON.parse(localStorage.getItem("users")) || {};
-  if (!users[user]) users[user] = {};
-
-  const profileUsername = document.getElementById("profileUsername");
-  const profilePic = document.getElementById("profilePic");
-  const uploadBtn = document.getElementById("uploadBtn");
-  const resetPicBtn = document.getElementById("resetPicBtn");
-  const uploadPic = document.getElementById("uploadPic");
-
-  const bioText = document.getElementById("bioText");
-  const bioInput = document.getElementById("bioInput");
-  const editBioBtn = document.getElementById("editBioBtn");
-  const saveBioBtn = document.getElementById("saveBioBtn");
-
-  // Display username
-  profileUsername.textContent = user;
-
-  // Display profile picture
-  profilePic.src = users[user].profilePic || "default-profile.png";
-
-  // Display bio
-  bioText.textContent = users[user].bio || "Your bio goes here...";
-  bioInput.style.display = "none";
-  saveBioBtn.style.display = "none";
-
-  // Upload profile picture
-  uploadBtn.addEventListener("click", () => uploadPic.click());
-  uploadPic.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      profilePic.src = reader.result;
-      users[user].profilePic = reader.result;
-      localStorage.setItem("users", JSON.stringify(users));
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // Reset picture
-  resetPicBtn.addEventListener("click", () => {
-    profilePic.src = "default-profile.png";
-    users[user].profilePic = "";
-    localStorage.setItem("users", JSON.stringify(users));
-  });
-
-  // Edit bio
-  editBioBtn.addEventListener("click", () => {
-    bioInput.value = users[user].bio || "";
-    bioText.style.display = "none";
-    bioInput.style.display = "block";
-    editBioBtn.style.display = "none";
-    saveBioBtn.style.display = "inline-block";
-
-    // Auto-adjust textarea height
-    bioInput.style.height = "auto";
-    bioInput.style.height = bioInput.scrollHeight + "px";
-    bioInput.focus();
-  });
-
-  // Save bio
-  saveBioBtn.addEventListener("click", () => {
-    const newBio = bioInput.value.trim() || "Your bio goes here...";
-    users[user].bio = newBio;
-    localStorage.setItem("users", JSON.stringify(users));
-
-    bioText.textContent = newBio;
-    bioText.style.display = "block";
-    bioInput.style.display = "none";
-    saveBioBtn.style.display = "none";
-    editBioBtn.style.display = "inline-block";
-  });
-
-  // Optional: auto-expand textarea while typing
-  bioInput.addEventListener("input", () => {
-    bioInput.style.height = "auto";
-    bioInput.style.height = bioInput.scrollHeight + "px";
-  });
-});
-// Logout
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      localStorage.removeItem("loggedInUser");
-      window.location.href = "index.html"; // redirect to login page
+    const cancelBtn = document.getElementById("cancelEditBtn");
+    if (cancelBtn) cancelBtn.addEventListener("click", () => {
+      editingIndex = null;
+      document.getElementById("timetableForm").reset();
+      document.getElementById("addClassBtn").textContent = "➕ Add Class";
+      cancelBtn.style.display = "none";
     });
-  }
 
-
-// ================= HOMEPAGE ================= //
-// === HOME FUNCTIONS ===
-// === HOME FUNCTIONS ===
-
-document.addEventListener("DOMContentLoaded", () => {
-  // ===== DISPLAY USERNAME =====
-  const usernameDisplay = document.getElementById("usernameDisplay");
-  const savedUser = localStorage.getItem("loggedInUser");
-
-  if (savedUser) {
-    usernameDisplay.textContent = savedUser;
-  } else {
-    usernameDisplay.textContent = "Guest";
-  }
-
-  // ===== LOGOUT FUNCTION =====
-  const logoutBtn = document.getElementById("logoutBtn");
-  logoutBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    localStorage.removeItem("loggedInUser");
-    alert("You have been logged out.");
-    window.location.href = "login.html";
+    loadTimetable();
   });
 
-  // ===== AI ASSISTANT LOGIC =====
- const aiForm = document.getElementById("aiForm");
-const aiInput = document.getElementById("aiInput");
-const aiChatBox = document.getElementById("aiChatBox");
-
-function addMessage(text, sender = "bot") {
-  const msg = document.createElement("div");
-  msg.classList.add("ai-message", sender);
-  msg.textContent = text;
-  aiChatBox.appendChild(msg);
-  aiChatBox.scrollTop = aiChatBox.scrollHeight;
-}
-
-// Greet user
-const username = localStorage.getItem("loggedInUser") || "Student";
-addMessage(`Hello ${username}! I'm Black 🖤 — your AI assistant. Ask me anything.`, "bot");
-
-aiForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const userText = aiInput.value.trim();
-  if (!userText) return;
-
-  addMessage(userText, "user");
-  aiInput.value = "";
-
-  try {
-    const res = await fetch("http://localhost:5000/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: userText })
-    });
-    const data = await res.json();
-    addMessage(data.reply, "bot");
-  } catch (err) {
-    console.error(err);
-    addMessage("Sorry, I couldn't reach Black. Try again later.", "bot");
-  }
-});
-
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js").then(() => {
-    console.log("✅ Service Worker registered! App is now a PWA.");
-  });
-}
-Notification.requestPermission().then(permission => {
-  if(permission === "granted") console.log("Notifications enabled!");
-});
-
-
-//=========================================
-// Add notification
-// ==========================
-function addNotification(message) {
-  const user = getCurrentUser();
-  if (!user) return;
-
-  let users = JSON.parse(localStorage.getItem("users")) || {};
-  if (!users[user].notifications) users[user].notifications = [];
-
-  users[user].notifications.push(message);
-  localStorage.setItem("users", JSON.stringify(users));
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  if (document.getElementById("welcomeMsg")) {
-    loadHome();
-  }
-});
-// Logout
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      localStorage.removeItem("loggedInUser");
-      window.location.href = "index.html"; // redirect to login page
-    });
-  }
-
-
-
-function updateNotifications() {
-  const user = getCurrentUser();
-  if (!user) return;
-
-  const users = JSON.parse(localStorage.getItem("users")) || {};
-  const data = users[user] || { timetable: [] };
-
-  const notificationsList = document.getElementById("homeNotifications");
-  if (!notificationsList) return;
-
-  notificationsList.innerHTML = "";
-
-  if (!data.timetable || data.timetable.length === 0) {
-    notificationsList.innerHTML = "<li>No classes scheduled yet.</li>";
-    return;
-  }
-
-  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-  const today = days[new Date().getDay()];
-
-  const todayClasses = data.timetable.filter(c => c.day === today);
-
-  if (todayClasses.length === 0) {
-    notificationsList.innerHTML = "<li>No classes today 🎉</li>";
-    return;
-  }
-
-  const now = new Date();
-  let hasUpcoming = false;
-
-  todayClasses.forEach(cls => {
-    if (!cls.time) return;
-
-    const [h, m] = cls.time.split(":").map(Number);
-    const classTime = new Date();
-    classTime.setHours(h, m, 0);
-
-    // Calculate difference in minutes
-    const diffMins = Math.floor((classTime - now) / 60000);
-
-    if (diffMins > 0 && diffMins <= 60) {
-      const li = document.createElement("li");
-      li.textContent = `⏰ ${cls.subject} starts in ${diffMins} min`;
-      notificationsList.appendChild(li);
-      hasUpcoming = true;
-
-      // Trigger browser notification if permission granted
-      if ("Notification" in window && Notification.permission === "granted") {
-        new Notification(`Upcoming Class: ${cls.subject}`, {
-          body: `Starts in ${diffMins} minute(s)`,
-          icon: "default-profile.png" // optional icon
-        });
-      }
-    }
-  });
-
-  if (!hasUpcoming) {
-    notificationsList.innerHTML = "<li>No upcoming classes within the next hour.</li>";
-  }
-}
-
-// Request permission for notifications on page load
-if ("Notification" in window) {
-  if (Notification.permission !== "granted") {
-    Notification.requestPermission();
-  }
-}
-
-// Call every minute to update dynamically
-setInterval(updateNotifications, 60000);
-updateNotifications();
-
-// ================= INIT ================= //
-document.addEventListener("DOMContentLoaded", () => {
-  if (document.getElementById("notesList")) loadNotes();
-  if (document.getElementById("timetableList")) loadTimetable();
-  if (document.getElementById("gpaList")) loadGPA();
-  if (document.getElementById("profileName")) loadProfile();
-  if (document.getElementById("welcomeMsg")) {
-    loadHomepage();
-    updateDashboard();
-    updateNotifications();
-    setInterval(updateNotifications, 60000); // auto-refresh notifications every 1 min
-  }
-
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) logoutBtn.addEventListener("click", logout);
-});
-// Register Service Worker
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js").then(() => {
-    console.log("✅ Service Worker registered!");
-  });
-}
-// Replace with your public VAPID key
-const publicVapidKey = "BHWjwl2zi4E9SSqkga8Q1udL2G98sXZScnr_PSz04zn0PlCLu33rPQdd7r2l_wQAcEa-iuu07TZukVt-WUvTaJo";
-
-function requestNotificationPermission() {
-  Notification.requestPermission().then(permission => {
-    if (permission === "granted") {
-      messaging.getToken({ vapidKey: publicVapidKey })
-        .then((currentToken) => {
-          if (currentToken) {
-            console.log("FCM Token:", currentToken);
-            // 🔹 Send this token to your backend to save it for later use
-          } else {
-            console.log("No registration token available.");
-          }
-        })
-        .catch((err) => {
-          console.error("Error retrieving token:", err);
-        });
-    } else {
-      console.log("Notification permission denied.");
-    }
-  });
-}
-
-requestNotificationPermission();
-document.addEventListener("DOMContentLoaded", () => {
-  const aiForm = document.getElementById("aiForm");
-  const aiInput = document.getElementById("aiInput");
-  const aiChatBox = document.getElementById("aiChatBox");
-
-  function addMessage(text, sender = "bot") {
-    const msg = document.createElement("div");
-    msg.classList.add("ai-message", sender);
-    msg.textContent = text;
-    aiChatBox.appendChild(msg);
-    aiChatBox.scrollTop = aiChatBox.scrollHeight; // scroll to bottom
-  }
-
-  aiForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const userText = aiInput.value.trim();
-    if (!userText) return;
-
-    addMessage(userText, "user"); // show user message
-    aiInput.value = "";
-
-    // Simple AI response logic (replace with real AI API later)
-    setTimeout(() => {
-      let botReply = "I'm not sure how to respond to that yet.";
-      if (/hello|hi/i.test(userText)) botReply = "Hello! How can I assist you today?";
-      if (/gpa/i.test(userText)) botReply = "You can check your GPA in the GPA section!";
-      if (/timetable/i.test(userText)) botReply = "Your timetable is available under Timetable.";
-      addMessage(botReply, "bot");
-    }, 500);
-  });
-});
-async function getAIResponse(userText) {
-  const response = await fetch("/api/ai", { 
-    method: "POST", 
-    headers: { "Content-Type": "application/json" }, 
-    body: JSON.stringify({ message: userText })
-  });
-  const data = await response.json();
-  return data.reply; // assuming your API returns { reply: "..." }
-}
-
-// ===== LOGIN =====
-const loginBtn = document.getElementById('loginBtn');
-const loginError = document.getElementById('loginError');
-
-loginBtn?.addEventListener('click', () => {
-  const username = document.getElementById('loginUser').value.trim();
-  const password = document.getElementById('loginPass').value;
-
-  const users = JSON.parse(localStorage.getItem('users')) || {};
-  if(users[username] && users[username].password === password){
-    localStorage.setItem('currentUser', username);
-    window.location.href = "homepage.html";
-  } else {
-    loginError.textContent = "Invalid username or password!";
-  }
-});
-
-// ===== HOMEPAGE =====
-function getCurrentUser() {
-  return localStorage.getItem('currentUser');
-}
-
-function loadHome() {
-  const user = getCurrentUser();
-  if(!user) return window.location.href = 'login.html';
-
-  const users = JSON.parse(localStorage.getItem('users')) || {};
-  const data = users[user] || {};
-
-  document.getElementById('welcomeMsg').textContent = `Welcome, ${user} 👋`;
-
-  document.getElementById('notesCount').textContent = (data.notes || []).length;
-  document.getElementById('classCount').textContent = (data.timetable || []).length;
-  document.getElementById('gpaCount').textContent = (data.gpa || []).length;
-
-  // Progress
-  const total = (data.notes?.length || 0) + (data.timetable?.length || 0) + (data.gpa?.length || 0);
-  const progress = Math.min(100, total * 20);
-  document.getElementById('progressBar').style.width = progress + '%';
-  document.getElementById('progressText').textContent = `Overall progress: ${progress}%`;
-
-  // Notifications
-  updateNotifications();
-}
-
-// ===== LOGOUT =====
-document.getElementById('logoutBtn')?.addEventListener('click', () => {
-  localStorage.removeItem('currentUser');
-  window.location.href = 'login.html';
-});
-
-// ===== AI Assistant =====
-const aiForm = document.getElementById('aiForm');
-const aiInput = document.getElementById('aiInput');
-const aiChatbox = document.getElementById('aiChatbox');
-
-aiForm?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const message = aiInput.value.trim();
-  if(!message) return;
-  addMessage('user', message);
-  aiInput.value = '';
-
-  // Call OpenAI API
-  const botReply = await getAIResponse(message);
-  addMessage('bot', botReply);
-});
-
-function addMessage(sender, text){
-  const div = document.createElement('div');
-  div.classList.add('ai-message', sender);
-  div.textContent = text;
-  aiChatbox.appendChild(div);
-  aiChatbox.scrollTop = aiChatbox.scrollHeight;
-}
-
-// ===== OPENAI =====
-async function getAIResponse(prompt){
-  try {
-    const res = await fetch('https://api.openai.com/v1/chat/completions',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Authorization':'Bearer YOUR_OPENAI_KEY'
-      },
-      body: JSON.stringify({
-        model:'gpt-3.5-turbo',
-        messages:[{role:'user', content: prompt}],
-        temperature:0.7
-      })
-    });
-    const data = await res.json();
-    return data.choices[0].message.content;
-  } catch(err){
-    console.error(err);
-    return "Sorry, I couldn't process that.";
-  }
-}
-
-// ===== NOTIFICATIONS =====
-function updateNotifications(){
-  const user = getCurrentUser();
-  if(!user) return;
-  const users = JSON.parse(localStorage.getItem('users')) || {};
-  const data = users[user] || {};
-  const list = document.getElementById('homeNotifications');
-  if(!list) return;
-
-  list.innerHTML = '';
-  if(!(data.timetable?.length)) list.innerHTML = "<li>No classes today 🎉</li>";
-  else data.timetable.forEach(c => {
-    list.innerHTML += `<li>⏰ ${c.course || c.subject} at ${c.time || 'N/A'} on ${c.day || 'N/A'}</li>`;
-  });
-}
-
-document.addEventListener('DOMContentLoaded', loadHome);
-
-
-
-
-
+  return { loadTimetable, addClass, editClass, deleteClass };
+})();
 
 
 
