@@ -1,36 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile | Student Companion</title>
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body class="light-theme">
-  <header class="topbar">
-    <div class="brand">Student Companion — Team Black 🖤</div>
-    <nav class="topbar-actions">
-      <button id="theme-toggle">🌙</button>
-      <span id="user-greeting"></span>
-      <a href="home.html" class="btn">Home</a>
-      <a href="notes.html" class="btn">Notes</a>
-      <a href="timetable.html" class="btn">Timetable</a>
-      <a href="gpa.html" class="btn">GPA</a>
-      <a href="ai.html" class="btn">Black AI</a>
-      <a href="profile.html" class="btn">Profile</a>
-      <button id="logout-btn" class="btn">Logout</button>
-    </nav>
-  </header>
+// ====== AUTHENTICATION ======
 
-  <main class="container">
-    <h1>Profile</h1>
-    <p>Username: <span id="profile-username"></span></p>
-    <p>Email: <span id="profile-email">example@example.com</span></p>
-    <p>Profile picture placeholder:</p>
-    <div class="profile-pic">🖼️</div>
-  </main>
+// Get current logged-in user
+function getCurrentUser() {
+  return localStorage.getItem("currentUser");
+}
 
-  <script src="js/theme.js"></script>
-  <script src="js/auth.js"></script>
-</body>
-</html>
+// Update greeting across pages
+function updateGreeting() {
+  const username = getCurrentUser();
+  if (username) {
+    const userGreeting = document.getElementById("user-greeting");
+    const userNameSpan = document.getElementById("user-name");
+    const profileUsername = document.getElementById("profile-username");
+    if (userGreeting) userGreeting.textContent = `Hello, ${username}`;
+    if (userNameSpan) userNameSpan.textContent = username;
+    if (profileUsername) profileUsername.textContent = username;
+  }
+}
+
+// Redirect if logged in
+function redirectIfLoggedIn() {
+  if (getCurrentUser() && window.location.pathname.endsWith("index.html")) {
+    window.location.href = "home.html";
+  }
+}
+
+// Redirect if not logged in
+function redirectIfNotLoggedIn() {
+  if (!getCurrentUser() && !window.location.pathname.endsWith("index.html") && !window.location.pathname.endsWith("signup.html")) {
+    window.location.href = "index.html";
+  }
+}
+
+// SIGNUP
+const signupForm = document.getElementById("signup-form");
+if (signupForm) {
+  signupForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const username = document.getElementById("signup-username").value.trim();
+    const password = document.getElementById("signup-password").value.trim();
+    if (!username || !password) return alert("Please enter username and password!");
+
+    let users = JSON.parse(localStorage.getItem("users")) || {};
+    if (users[username]) return alert("Username already exists!");
+
+    users[username] = { password: password };
+    localStorage.setItem("users", JSON.stringify(users));
+    alert("Signup successful! Please login.");
+    window.location.href = "index.html";
+  });
+}
+
+// LOGIN
+const loginForm = document.getElementById("login-form");
+if (loginForm) {
+  loginForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const username = document.getElementById("login-username").value.trim();
+    const password = document.getElementById("login-password").value.trim();
+    let users = JSON.parse(localStorage.getItem("users")) || {};
+
+    if (users[username] && users[username].password === password) {
+      localStorage.setItem("currentUser", username);
+      window.location.href = "home.html";
+    } else {
+      alert("Invalid username or password!");
+    }
+  });
+}
+
+// LOGOUT
+const logoutBtn = document.getElementById("logout-btn");
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("currentUser");
+    window.location.href = "index.html";
+  });
+}
+
+// Initialize
+redirectIfLoggedIn();
+redirectIfNotLoggedIn();
+updateGreeting();
+
