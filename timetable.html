@@ -1,60 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Timetable | Student Companion</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="script.js" defer></script>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
- <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-left">📘 Student Companion</div>
-    <div class="nav-right">
-      <a href="homepage.html">Home</a>
-      <a href="notes.html">Notes</a>
-      <a href="timetable.html" class="active">Timetable</a>
-      <a href="gpa.html">GPA</a>
-      <a href="profile.html">Profile</a>
-      <a href="#" onclick="logout()">Logout</a>
-    </div>
-  </nav>
-  <main class="container card">
-    <h1>📅 My Timetable</h1>
+<body class="light-theme">
+  <header class="topbar">
+    <div class="brand">Student Companion — Team Black 🖤</div>
+    <nav class="topbar-actions">
+      <button id="theme-toggle">🌙</button>
+      <span id="user-greeting"></span>
+      <a href="home.html" class="btn">Home</a>
+      <a href="notes.html" class="btn">Notes</a>
+      <a href="timetable.html" class="btn">Timetable</a>
+      <a href="gpa.html" class="btn">GPA</a>
+      <a href="ai.html" class="btn">Black AI</a>
+      <a href="profile.html" class="btn">Profile</a>
+      <button id="logout-btn" class="btn">Logout</button>
+    </nav>
+  </header>
 
-    <form id="timetableForm">
-      <input id="classCourse" type="text" placeholder="Course name (e.g. Physics 101)" required>
-      <select id="classDay" required>
-        <option value="">Select Day</option>
-        <option value="Sunday">Sunday</option>
-        <option value="Monday">Monday</option>
-        <option value="Tuesday">Tuesday</option>
-        <option value="Wednesday">Wednesday</option>
-        <option value="Thursday">Thursday</option>
-        <option value="Friday">Friday</option>
-        <option value="Saturday">Saturday</option>
-      </select>
-      <input id="classTime" type="time" required>
-      <select id="notifyBefore">
-        <option value="5">Notify 5 minutes before</option>
-        <option value="10">Notify 10 minutes before</option>
-        <option value="20">Notify 20 minutes before</option>
-        <option value="30">Notify 30 minutes before</option>
-      </select>
-
-      <div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-        <button type="submit" id="addClassBtn" class="btn">➕ Add Class</button>
-        <button type="button" id="cancelEditBtn" class="btn" style="display:none;background:#6c757d">Cancel Edit</button>
-      </div>
-    </form>
-
-    <ul id="timetableList" style="margin-top:18px"></ul>
+  <main class="container">
+    <h1>Timetable</h1>
+    <p>Your timetable will appear here.</p>
   </main>
 
-  <footer>
-    <p>© 2025 Student Companion | Team Black 🖤</p>
-    <p>Powered by Ezeilo </p>
-  </footer>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>
 
