@@ -962,6 +962,123 @@ async function getAIResponse(userText) {
   return data.reply; // assuming your API returns { reply: "..." }
 }
 
+// ===== LOGIN =====
+const loginBtn = document.getElementById('loginBtn');
+const loginError = document.getElementById('loginError');
+
+loginBtn?.addEventListener('click', () => {
+  const username = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+
+  const users = JSON.parse(localStorage.getItem('users')) || {};
+  if(users[username] && users[username].password === password){
+    localStorage.setItem('currentUser', username);
+    window.location.href = "homepage.html";
+  } else {
+    loginError.textContent = "Invalid username or password!";
+  }
+});
+
+// ===== HOMEPAGE =====
+function getCurrentUser() {
+  return localStorage.getItem('currentUser');
+}
+
+function loadHome() {
+  const user = getCurrentUser();
+  if(!user) return window.location.href = 'login.html';
+
+  const users = JSON.parse(localStorage.getItem('users')) || {};
+  const data = users[user] || {};
+
+  document.getElementById('welcomeMsg').textContent = `Welcome, ${user} 👋`;
+
+  document.getElementById('notesCount').textContent = (data.notes || []).length;
+  document.getElementById('classCount').textContent = (data.timetable || []).length;
+  document.getElementById('gpaCount').textContent = (data.gpa || []).length;
+
+  // Progress
+  const total = (data.notes?.length || 0) + (data.timetable?.length || 0) + (data.gpa?.length || 0);
+  const progress = Math.min(100, total * 20);
+  document.getElementById('progressBar').style.width = progress + '%';
+  document.getElementById('progressText').textContent = `Overall progress: ${progress}%`;
+
+  // Notifications
+  updateNotifications();
+}
+
+// ===== LOGOUT =====
+document.getElementById('logoutBtn')?.addEventListener('click', () => {
+  localStorage.removeItem('currentUser');
+  window.location.href = 'login.html';
+});
+
+// ===== AI Assistant =====
+const aiForm = document.getElementById('aiForm');
+const aiInput = document.getElementById('aiInput');
+const aiChatbox = document.getElementById('aiChatbox');
+
+aiForm?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const message = aiInput.value.trim();
+  if(!message) return;
+  addMessage('user', message);
+  aiInput.value = '';
+
+  // Call OpenAI API
+  const botReply = await getAIResponse(message);
+  addMessage('bot', botReply);
+});
+
+function addMessage(sender, text){
+  const div = document.createElement('div');
+  div.classList.add('ai-message', sender);
+  div.textContent = text;
+  aiChatbox.appendChild(div);
+  aiChatbox.scrollTop = aiChatbox.scrollHeight;
+}
+
+// ===== OPENAI =====
+async function getAIResponse(prompt){
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer YOUR_OPENAI_KEY'
+      },
+      body: JSON.stringify({
+        model:'gpt-3.5-turbo',
+        messages:[{role:'user', content: prompt}],
+        temperature:0.7
+      })
+    });
+    const data = await res.json();
+    return data.choices[0].message.content;
+  } catch(err){
+    console.error(err);
+    return "Sorry, I couldn't process that.";
+  }
+}
+
+// ===== NOTIFICATIONS =====
+function updateNotifications(){
+  const user = getCurrentUser();
+  if(!user) return;
+  const users = JSON.parse(localStorage.getItem('users')) || {};
+  const data = users[user] || {};
+  const list = document.getElementById('homeNotifications');
+  if(!list) return;
+
+  list.innerHTML = '';
+  if(!(data.timetable?.length)) list.innerHTML = "<li>No classes today 🎉</li>";
+  else data.timetable.forEach(c => {
+    list.innerHTML += `<li>⏰ ${c.course || c.subject} at ${c.time || 'N/A'} on ${c.day || 'N/A'}</li>`;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', loadHome);
+
 
 
 
