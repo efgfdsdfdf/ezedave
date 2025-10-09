@@ -724,58 +724,44 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ===== AI ASSISTANT LOGIC =====
-  const aiForm = document.getElementById("aiForm");
-  const aiInput = document.getElementById("aiInput");
-  const aiChatBox = document.getElementById("aiChatBox");
+ const aiForm = document.getElementById("aiForm");
+const aiInput = document.getElementById("aiInput");
+const aiChatBox = document.getElementById("aiChatBox");
 
-  // Add chat messages
-  function addMessage(text, sender = "bot") {
-    const msg = document.createElement("div");
-    msg.classList.add("ai-message", sender);
-    msg.textContent = text;
-    aiChatBox.appendChild(msg);
-    aiChatBox.scrollTop = aiChatBox.scrollHeight;
+function addMessage(text, sender = "bot") {
+  const msg = document.createElement("div");
+  msg.classList.add("ai-message", sender);
+  msg.textContent = text;
+  aiChatBox.appendChild(msg);
+  aiChatBox.scrollTop = aiChatBox.scrollHeight;
+}
+
+// Greet user
+const username = localStorage.getItem("loggedInUser") || "Student";
+addMessage(`Hello ${username}! I'm Black 🖤 — your AI assistant. Ask me anything.`, "bot");
+
+aiForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const userText = aiInput.value.trim();
+  if (!userText) return;
+
+  addMessage(userText, "user");
+  aiInput.value = "";
+
+  try {
+    const res = await fetch("http://localhost:5000/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: userText })
+    });
+    const data = await res.json();
+    addMessage(data.reply, "bot");
+  } catch (err) {
+    console.error(err);
+    addMessage("Sorry, I couldn't reach Black. Try again later.", "bot");
   }
-
-  // Greet user when page loads
-  const username = savedUser || "Student";
-  addMessage(`Hello ${username}! I'm Black 🖤 — your AI assistant. How can I help you today?`, "bot");
-
-  // AI message responses
-  aiForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const userText = aiInput.value.trim();
-    if (!userText) return;
-
-    addMessage(userText, "user");
-    aiInput.value = "";
-
-    setTimeout(() => {
-      let reply = "";
-
-      // Basic AI responses (can expand later)
-      if (/hello|hi|hey/i.test(userText)) {
-        reply = `Hi ${username}! How are you feeling today?`;
-      } else if (/gpa/i.test(userText)) {
-        reply = "To check your GPA, go to the GPA page 📊.";
-      } else if (/notes?/i.test(userText)) {
-        reply = "Your notes are available under the Notes section 📚.";
-      } else if (/timetable/i.test(userText)) {
-        reply = "Check your class schedule in the Timetable page 🗓️.";
-      } else if (/profile/i.test(userText)) {
-        reply = "You can view or edit your profile on the Profile page 👤.";
-      } else if (/logout/i.test(userText)) {
-        reply = "Click the Logout button in the navbar when you're ready to sign out.";
-      } else if (/help/i.test(userText)) {
-        reply = "I'm here to assist you! You can ask about GPA, notes, timetable, or your profile.";
-      } else {
-        reply = "Hmm... I’m still learning. Try asking about your GPA, timetable, or notes.";
-      }
-
-      addMessage(reply, "bot");
-    }, 600);
-  });
 });
+
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js").then(() => {
     console.log("✅ Service Worker registered! App is now a PWA.");
@@ -975,6 +961,7 @@ async function getAIResponse(userText) {
   const data = await response.json();
   return data.reply; // assuming your API returns { reply: "..." }
 }
+
 
 
 
