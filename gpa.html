@@ -1,69 +1,38 @@
-// ====== GPA CALCULATOR ======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPA | Student Companion</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="light-theme">
 
-const gpaContainer = document.querySelector(".container");
+  <header class="topbar">
+    <div class="brand">Student Companion — Team Black 🖤</div>
+    <nav class="topbar-actions">
+      <button id="theme-toggle">🌙</button>
+      <span id="user-greeting"></span>
+      <a href="home.html" class="btn">Home</a>
+      <a href="notes.html" class="btn">Notes</a>
+      <a href="timetable.html" class="btn">Timetable</a>
+      <a href="gpa.html" class="btn">GPA</a>
+      <a href="ai.html" class="btn">Black AI</a>
+      <a href="profile.html" class="btn">Profile</a>
+      <button id="logout-btn" class="btn">Logout</button>
+    </nav>
+  </header>
 
-if (gpaContainer && window.location.pathname.endsWith("gpa.html")) {
-  // Create initial HTML structure
-  gpaContainer.innerHTML = `
+  <main class="container">
     <h1>GPA Calculator</h1>
-    <div id="courses-list"></div>
-    <button id="add-course-btn">Add Course</button>
-    <button id="calculate-gpa-btn">Calculate GPA</button>
-    <p id="gpa-result"></p>
-  `;
+    <p>Add courses and calculate your GPA here.</p>
+  </main>
 
-  const coursesList = document.getElementById("courses-list");
-  const addCourseBtn = document.getElementById("add-course-btn");
-  const calculateBtn = document.getElementById("calculate-gpa-btn");
-  const gpaResult = document.getElementById("gpa-result");
-
-  // Function to create a new course input row
-  function createCourseRow() {
-    const row = document.createElement("div");
-    row.className = "course-row";
-    row.innerHTML = `
-      <input type="text" placeholder="Course Name" class="course-name">
-      <input type="number" placeholder="Credits" class="course-credits" min="0" step="0.5">
-      <input type="number" placeholder="Grade (0-100)" class="course-grade" min="0" max="100">
-      <button class="remove-course-btn">❌</button>
-    `;
-    coursesList.appendChild(row);
-
-    // Remove course
-    row.querySelector(".remove-course-btn").addEventListener("click", () => {
-      coursesList.removeChild(row);
-    });
-  }
-
-  // Add initial row
-  createCourseRow();
-
-  // Add course button
-  addCourseBtn.addEventListener("click", createCourseRow);
-
-  // GPA calculation
-  calculateBtn.addEventListener("click", () => {
-    const courseRows = document.querySelectorAll(".course-row");
-    let totalCredits = 0;
-    let weightedSum = 0;
-
-    courseRows.forEach(row => {
-      const credits = parseFloat(row.querySelector(".course-credits").value) || 0;
-      const grade = parseFloat(row.querySelector(".course-grade").value) || 0;
-
-      totalCredits += credits;
-      weightedSum += grade * credits;
-    });
-
-    if (totalCredits === 0) {
-      gpaResult.textContent = "Please enter at least one course with credits.";
-      return;
-    }
-
-    const gpa = (weightedSum / totalCredits).toFixed(2);
-    gpaResult.textContent = `Your GPA is: ${gpa}`;
-  });
-}
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/gpa.js"></script>
+</body>
+</html>
 
 
 
