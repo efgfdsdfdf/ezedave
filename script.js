@@ -904,6 +904,47 @@ function requestNotificationPermission() {
 }
 
 requestNotificationPermission();
+document.addEventListener("DOMContentLoaded", () => {
+  const aiForm = document.getElementById("aiForm");
+  const aiInput = document.getElementById("aiInput");
+  const aiChatBox = document.getElementById("aiChatBox");
+
+  function addMessage(text, sender = "bot") {
+    const msg = document.createElement("div");
+    msg.classList.add("ai-message", sender);
+    msg.textContent = text;
+    aiChatBox.appendChild(msg);
+    aiChatBox.scrollTop = aiChatBox.scrollHeight; // scroll to bottom
+  }
+
+  aiForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const userText = aiInput.value.trim();
+    if (!userText) return;
+
+    addMessage(userText, "user"); // show user message
+    aiInput.value = "";
+
+    // Simple AI response logic (replace with real AI API later)
+    setTimeout(() => {
+      let botReply = "I'm not sure how to respond to that yet.";
+      if (/hello|hi/i.test(userText)) botReply = "Hello! How can I assist you today?";
+      if (/gpa/i.test(userText)) botReply = "You can check your GPA in the GPA section!";
+      if (/timetable/i.test(userText)) botReply = "Your timetable is available under Timetable.";
+      addMessage(botReply, "bot");
+    }, 500);
+  });
+});
+async function getAIResponse(userText) {
+  const response = await fetch("/api/ai", { 
+    method: "POST", 
+    headers: { "Content-Type": "application/json" }, 
+    body: JSON.stringify({ message: userText })
+  });
+  const data = await response.json();
+  return data.reply; // assuming your API returns { reply: "..." }
+}
+
 
 
 
