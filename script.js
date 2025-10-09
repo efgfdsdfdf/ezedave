@@ -703,58 +703,81 @@ document.addEventListener("DOMContentLoaded", () => {
 // === HOME FUNCTIONS ===
 // === HOME FUNCTIONS ===
 
-function loadHome() {
-  const user = getCurrentUser();
-  if (!user) return;
+document.addEventListener("DOMContentLoaded", () => {
+  // ===== DISPLAY USERNAME =====
+  const usernameDisplay = document.getElementById("usernameDisplay");
+  const savedUser = localStorage.getItem("loggedInUser");
 
-  let users = JSON.parse(localStorage.getItem("users")) || {};
-  let data = users[user];
-
-  // Welcome message
-  const welcomeMsg = document.getElementById("welcomeMsg");
-  if (welcomeMsg) {
-    welcomeMsg.textContent = `Welcome, ${user} 👋`;
+  if (savedUser) {
+    usernameDisplay.textContent = savedUser;
+  } else {
+    usernameDisplay.textContent = "Guest";
   }
 
-  // Calculate counts
-  const notesCount = (data.notes || []).length;
-  const classCount = (data.timetable || []).length;
-  const gpaCount = (data.gpa || []).length;
+  // ===== LOGOUT FUNCTION =====
+  const logoutBtn = document.getElementById("logoutBtn");
+  logoutBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.removeItem("loggedInUser");
+    alert("You have been logged out.");
+    window.location.href = "login.html";
+  });
 
-  // Update counts on page
-  if (document.getElementById("notesCount")) {
-    document.getElementById("notesCount").textContent = notesCount;
-    document.getElementById("classCount").textContent = classCount;
-    document.getElementById("gpaCount").textContent = gpaCount;
+  // ===== AI ASSISTANT LOGIC =====
+  const aiForm = document.getElementById("aiForm");
+  const aiInput = document.getElementById("aiInput");
+  const aiChatBox = document.getElementById("aiChatBox");
+
+  // Add chat messages
+  function addMessage(text, sender = "bot") {
+    const msg = document.createElement("div");
+    msg.classList.add("ai-message", sender);
+    msg.textContent = text;
+    aiChatBox.appendChild(msg);
+    aiChatBox.scrollTop = aiChatBox.scrollHeight;
   }
 
-  // Progress (max 100%)
-  let total = notesCount + classCount + gpaCount;
-  let progress = total > 0 ? Math.min(100, total * 20) : 0; 
+  // Greet user when page loads
+  const username = savedUser || "Student";
+  addMessage(`Hello ${username}! I'm Black 🖤 — your AI assistant. How can I help you today?`, "bot");
 
-  const progressBar = document.getElementById("progressBar");
-  const progressText = document.getElementById("progressText");
-  if (progressBar && progressText) {
-    progressBar.style.width = progress + "%";
-    progressText.textContent = `Your overall progress: ${progress}%`;
-  }
+  // AI message responses
+  aiForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const userText = aiInput.value.trim();
+    if (!userText) return;
 
-  // Notifications
-  const notifList = document.getElementById("homeNotifications");
-  if (notifList) {
-    notifList.innerHTML = "";
-    let notifs = data.notifications || [];
-    if (notifs.length === 0) {
-      notifList.innerHTML = "<li>No notifications yet.</li>";
-    } else {
-      notifs.slice(-3).reverse().forEach(n => {
-        const li = document.createElement("li");
-        li.textContent = n;
-        notifList.appendChild(li);
-      });
-    }
-  }
-}
+    addMessage(userText, "user");
+    aiInput.value = "";
+
+    setTimeout(() => {
+      let reply = "";
+
+      // Basic AI responses (can expand later)
+      if (/hello|hi|hey/i.test(userText)) {
+        reply = `Hi ${username}! How are you feeling today?`;
+      } else if (/gpa/i.test(userText)) {
+        reply = "To check your GPA, go to the GPA page 📊.";
+      } else if (/notes?/i.test(userText)) {
+        reply = "Your notes are available under the Notes section 📚.";
+      } else if (/timetable/i.test(userText)) {
+        reply = "Check your class schedule in the Timetable page 🗓️.";
+      } else if (/profile/i.test(userText)) {
+        reply = "You can view or edit your profile on the Profile page 👤.";
+      } else if (/logout/i.test(userText)) {
+        reply = "Click the Logout button in the navbar when you're ready to sign out.";
+      } else if (/help/i.test(userText)) {
+        reply = "I'm here to assist you! You can ask about GPA, notes, timetable, or your profile.";
+      } else {
+        reply = "Hmm... I’m still learning. Try asking about your GPA, timetable, or notes.";
+      }
+
+      addMessage(reply, "bot");
+    }, 600);
+  });
+});
+
+
 //=========================================
 // Add notification
 // ==========================
@@ -944,6 +967,7 @@ async function getAIResponse(userText) {
   const data = await response.json();
   return data.reply; // assuming your API returns { reply: "..." }
 }
+
 
 
 
