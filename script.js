@@ -494,141 +494,108 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-// ================= GPA ================= //
-// === GPA & COURSE MANAGEMENT ===
-let editingCourseIndex = null;
+// ====== GPA Calculator ======
+const gpaForm = document.getElementById('gpaForm');
+const courseNameInput = document.getElementById('courseName');
+const courseGradeInput = document.getElementById('courseGrade');
+const courseUnitsInput = document.getElementById('courseUnits');
+const gpaList = document.getElementById('gpaList');
+const gpaResult = document.getElementById('gpaResult');
+const cancelEditBtn = document.getElementById('cancelCourseEditBtn');
 
-// Convert grade letter to points
-function gradeToPoints(grade) {
-  const scale = { A: 5, B: 4, C: 3, D: 2, E: 1, F: 0 };
-  return scale[grade.toUpperCase()] || 0;
+let courses = JSON.parse(localStorage.getItem('courses')) || [];
+let editIndex = null;
+
+// Map letter grades to numeric points
+const gradePoints = { A: 5, B: 4, C: 3, D: 2, E: 1, F: 0 };
+
+// ====== Render Courses ======
+function renderCourses() {
+  gpaList.innerHTML = '';
+  courses.forEach((course, index) => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <strong>${course.name}</strong> - Grade: ${course.grade} (${gradePoints[course.grade]}) - Units: ${course.units}
+      <button onclick="editCourse(${index})" class="btn" style="background:#ffc107;margin-left:5px;">✏️</button>
+      <button onclick="deleteCourse(${index})" class="btn" style="background:#dc3545;margin-left:5px;">🗑️</button>
+    `;
+    gpaList.appendChild(li);
+  });
+  calculateGPA();
 }
 
-// Add or update course
-function addCourse(e) {
-  e.preventDefault();
-
-  const user = getCurrentUser();
-  if (!user) return;
-
-  const name = document.getElementById("courseName").value.trim();
-  const grade = document.getElementById("courseGrade").value.trim().toUpperCase();
-  const units = parseInt(document.getElementById("courseUnits").value);
-
-  if (!name || !grade || !units) {
-    alert("Please fill in all fields.");
+// ====== Calculate GPA ======
+function calculateGPA() {
+  if (courses.length === 0) {
+    gpaResult.textContent = '0.00';
     return;
   }
-
-  let users = JSON.parse(localStorage.getItem("users")) || {};
-  if (!users[user].gpa) users[user].gpa = [];
-
-  if (editingCourseIndex === null) {
-    users[user].gpa.push({ name, grade, units });
-  } else {
-    users[user].gpa[editingCourseIndex] = { name, grade, units };
-    editingCourseIndex = null;
-    document.getElementById("addCourseBtn").textContent = "➕ Add Course";
-    document.getElementById("cancelCourseEditBtn").style.display = "none";
-  }
-
-  localStorage.setItem("users", JSON.stringify(users));
-  document.getElementById("gpaForm").reset();
-  loadGPA();
-}
-
-// Load GPA list
-function loadGPA() {
-  const user = getCurrentUser();
-  if (!user) return;
-
-  let users = JSON.parse(localStorage.getItem("users")) || {};
-  const gpaData = users[user].gpa || [];
-
-  const list = document.getElementById("gpaList");
-  if (!list) return;
-
-  list.innerHTML = "";
-  let totalUnits = 0, totalPoints = 0;
-
-  gpaData.forEach((course, index) => {
-    const points = gradeToPoints(course.grade);
-    totalUnits += course.units;
-    totalPoints += points * course.units;
-
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <span><b>${course.name}</b> - Grade: ${course.grade} (${points}), Units: ${course.units}</span>
-    `;
-
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "✏️ Edit";
-    editBtn.onclick = () => editCourse(index);
-
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "🗑️ Delete";
-    delBtn.onclick = () => deleteCourse(index);
-
-    li.appendChild(editBtn);
-    li.appendChild(delBtn);
-
-    list.appendChild(li);
+  let totalPoints = 0, totalUnits = 0;
+  courses.forEach(c => {
+    totalPoints += gradePoints[c.grade] * c.units;
+    totalUnits += c.units;
   });
-
-  const gpaResult = totalUnits > 0 ? (totalPoints / totalUnits).toFixed(2) : "0.00";
-  document.getElementById("gpaResult").textContent = `Your GPA: ${gpaResult}`;
+  const gpa = totalPoints / totalUnits;
+  gpaResult.textContent = gpa.toFixed(2);
 }
 
-// Edit course
-function editCourse(index) {
-  const user = getCurrentUser();
-  let users = JSON.parse(localStorage.getItem("users"));
-  const course = users[user].gpa[index];
+// ====== Add or Edit Course ======
+gpaForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = courseNameInput.value.trim();
+  const grade = courseGradeInput.value;
+  const units = parseInt(courseUnitsInput.value);
 
-  document.getElementById("courseName").value = course.name;
-  document.getElementById("courseGrade").value = course.grade;
-  document.getElementById("courseUnits").value = course.units;
+  if (!name || !grade || !units) return;
 
-  editingCourseIndex = index;
-  document.getElementById("addCourseBtn").textContent = "Update Course";
-  document.getElementById("cancelCourseEditBtn").style.display = "inline-block";
-}
-
-// Cancel editing
-function cancelCourseEdit() {
-  editingCourseIndex = null;
-  document.getElementById("gpaForm").reset();
-  document.getElementById("addCourseBtn").textContent = "➕ Add Course";
-  document.getElementById("cancelCourseEditBtn").style.display = "none";
-}
-
-// Delete course
-function deleteCourse(index) {
-  const user = getCurrentUser();
-  let users = JSON.parse(localStorage.getItem("users"));
-  users[user].gpa.splice(index, 1);
-  localStorage.setItem("users", JSON.stringify(users));
-  loadGPA();
-}
-
-// === LOGOUT FUNCTION ===
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("gpaForm");
-  if (form) form.addEventListener("submit", addCourse);
-
-  const cancelBtn = document.getElementById("cancelCourseEditBtn");
-  if (cancelBtn) cancelBtn.addEventListener("click", cancelCourseEdit);
-
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      localStorage.removeItem("loggedInUser");
-      window.location.href = "index.html"; // redirect to login page
-    });
+  if (editIndex !== null) {
+    courses[editIndex] = { name, grade, units };
+    editIndex = null;
+    cancelEditBtn.style.display = 'none';
+  } else {
+    courses.push({ name, grade, units });
   }
 
-  loadGPA();
+  localStorage.setItem('courses', JSON.stringify(courses));
+  gpaForm.reset();
+  renderCourses();
+});
+
+// ====== Edit Course ======
+function editCourse(index) {
+  const course = courses[index];
+  courseNameInput.value = course.name;
+  courseGradeInput.value = course.grade;
+  courseUnitsInput.value = course.units;
+  editIndex = index;
+  cancelEditBtn.style.display = 'inline-block';
+}
+
+// ====== Cancel Edit ======
+cancelEditBtn.addEventListener('click', () => {
+  gpaForm.reset();
+  editIndex = null;
+  cancelEditBtn.style.display = 'none';
+});
+
+// ====== Delete Course ======
+function deleteCourse(index) {
+  if (confirm(`Delete ${courses[index].name}?`)) {
+    courses.splice(index, 1);
+    localStorage.setItem('courses', JSON.stringify(courses));
+    renderCourses();
+  }
+}
+
+// ====== Initial Render ======
+renderCourses();
+
+// ====== Logout Button ======
+const logoutBtn = document.getElementById('logoutBtn');
+logoutBtn.addEventListener('click', () => {
+  localStorage.clear();
+  alert('You have been logged out!');
+  window.location.href = 'homepage.html';
 });
 
 
@@ -937,6 +904,7 @@ function requestNotificationPermission() {
 }
 
 requestNotificationPermission();
+
 
 
 
