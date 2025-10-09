@@ -4,43 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Notes | Student Companion</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-left">📘 Student Companion</div>
-    <div class="nav-right">
-      <a href="homepage.html">Home</a>
-      <a href="notes.html" class="active">Notes</a>
-      <a href="timetable.html">Timetable</a>
-      <a href="gpa.html">GPA</a>
-      <a href="profile.html">Profile</a>
-      <a href="#" onclick="logout()">Logout</a>
-    </div>
-  </nav>
+<body class="light-theme">
+  <header class="topbar">
+    <div class="brand">Student Companion — Team Black 🖤</div>
+    <nav class="topbar-actions">
+      <button id="theme-toggle">🌙</button>
+      <span id="user-greeting"></span>
+      <a href="home.html" class="btn">Home</a>
+      <a href="notes.html" class="btn">Notes</a>
+      <a href="timetable.html" class="btn">Timetable</a>
+      <a href="gpa.html" class="btn">GPA</a>
+      <a href="ai.html" class="btn">Black AI</a>
+      <a href="profile.html" class="btn">Profile</a>
+      <button id="logout-btn" class="btn">Logout</button>
+    </nav>
+  </header>
 
-  <!-- Notes Section -->
-  <main class="container fade-in">
-    <h1>📝 Your Notes</h1>
-    <p class="subtitle">Write, edit, and manage your notes below.</p>
-
-    <!-- Note Input -->
-    <textarea id="noteInput" placeholder="Write your note here..."></textarea>
-    <button id="saveNoteBtn">Save Note</button>
-
-    <!-- Notes List -->
-    <ul id="notesList"></ul>
+  <main class="container">
+    <h1>Notes</h1>
+    <p>Your notes will appear here.</p>
   </main>
 
-  <footer>
-    <p>© 2025 Student Companion | Team Black 🖤</p>
-    <p> Powered by Ezeilo</p>
-  </footer>
-
-  <script src="script.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>
+
 
 
 
