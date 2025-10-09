@@ -7,6 +7,18 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-left">📘 Student Companion</div>
+    <div class="nav-right">
+      <a href="homepage.html">Home</a>
+      <a href="notes.html" class="active">Notes</a>
+      <a href="timetable.html">Timetable</a>
+      <a href="gpa.html">GPA</a>
+      <a href="profile.html">Profile</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+  </nav>
 <header>
   <h1>Welcome, <span id="currentUserDisplay"></span>!</h1>
   <nav>
@@ -65,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
+
 
 
 
