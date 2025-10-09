@@ -1,0 +1,58 @@
+// ====== GPA CALCULATOR ======
+const gpaContainer = document.querySelector(".container");
+
+if (gpaContainer && window.location.pathname.endsWith("gpa.html")) {
+  gpaContainer.innerHTML = `
+    <h1>GPA Calculator</h1>
+    <div id="courses-list"></div>
+    <button id="add-course-btn">Add Course</button>
+    <button id="calculate-gpa-btn">Calculate GPA</button>
+    <p id="gpa-result"></p>
+  `;
+
+  const coursesList = document.getElementById("courses-list");
+  const addCourseBtn = document.getElementById("add-course-btn");
+  const calculateBtn = document.getElementById("calculate-gpa-btn");
+  const gpaResult = document.getElementById("gpa-result");
+
+  function createCourseRow() {
+    const row = document.createElement("div");
+    row.className = "course-row";
+    row.innerHTML = `
+      <input type="text" placeholder="Course Name" class="course-name">
+      <input type="number" placeholder="Credits" class="course-credits" min="0" step="0.5">
+      <input type="number" placeholder="Grade (0-100)" class="course-grade" min="0" max="100">
+      <button class="remove-course-btn">❌</button>
+    `;
+    coursesList.appendChild(row);
+
+    row.querySelector(".remove-course-btn").addEventListener("click", () => {
+      coursesList.removeChild(row);
+    });
+  }
+
+  createCourseRow();
+
+  addCourseBtn.addEventListener("click", createCourseRow);
+
+  calculateBtn.addEventListener("click", () => {
+    const courseRows = document.querySelectorAll(".course-row");
+    let totalCredits = 0;
+    let weightedSum = 0;
+
+    courseRows.forEach(row => {
+      const credits = parseFloat(row.querySelector(".course-credits").value) || 0;
+      const grade = parseFloat(row.querySelector(".course-grade").value) || 0;
+      totalCredits += credits;
+      weightedSum += grade * credits;
+    });
+
+    if (totalCredits === 0) {
+      gpaResult.textContent = "Please enter at least one course with credits.";
+      return;
+    }
+
+    const gpa = (weightedSum / totalCredits).toFixed(2);
+    gpaResult.textContent = `Your GPA is: ${gpa}`;
+  });
+}
