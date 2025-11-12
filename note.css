@@ -1,0 +1,154 @@
+:root{
+  --bg: #0b0b0b;
+  --card: #111;
+  --muted: #9ca3af;
+  --accent: #0c0c0d;
+  --accent-2: #4f46e5;
+  --panel-z: 2000;
+}
+@import url("/assets/css/theme.css");
+:root{
+  width: 500px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:var(--bg);
+  color:#fff;
+  height:100vh;
+}
+
+/* top nav */
+header{background:#0558d4;padding:10px 18px}
+nav ul{list-style:none;display:flex;gap:18px;margin:0;padding:0}
+nav a{color:#a78bfa;text-decoration:none;font-weight:600}
+nav a.active{text-decoration:underline}
+
+/* toggle button in header (for mobile/desktop sidebar control) */
+.toggle-sidebar{background: #020202d4;border:0;color:#fff;font-size:22px;padding:6px 8px;margin-right:8px;cursor:pointer;border-radius:6px}
+.toggle-sidebar:focus{outline:2px solid rgba(167,139,250,0.6)}
+header{display:flex;align-items:center;gap:12px}
+
+header nav img{width:34px;height:34px;object-fit:contain}
+
+/* main layout */
+.notes-container{display:flex;height:calc(100vh - 56px)}
+
+/* left sidebar */
+.sidebar{
+  width: 300px;
+  padding:18px;
+  background:var(--card);
+  border-right:1px solid #1f1f1f;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+/* collapsed variant: hides contents and shrinks width so editor can use full space */
+.sidebar.collapsed{width:0;padding:0;border-right:0;overflow:hidden;transition:width .22s ease,padding .22s ease}
+.note-editor{flex:1;padding:28px;display:flex;flex-direction:column;gap:12px;transition:all .22s ease}
+.note-editor.fullwidth{padding-left:28px;padding-right:28px}
+
+/* on small screens the sidebar is off-canvas by default; "show" brings it in */
+@media (max-width: 700px){
+  .sidebar{position:fixed;left:0;top:56px;height:calc(100vh - 56px);z-index:1200;transform:translateX(-110%);transition:transform .22s ease;background:var(--card)}
+  .sidebar.show{transform:translateX(0)}
+  /* give editor full width behind the off-canvas sidebar */
+  .notes-container{position:relative}
+  .note-editor{padding:12px}
+  /* slightly smaller title and typing area on small screens */
+  #noteTitle{font-size:1.4rem}
+  #noteContent{min-height:50vh;font-size:1rem;padding:12px}
+  .toggle-sidebar{display:block}
+}
+
+/* desktop: allow collapsing sidebar to zero width so editor grows */
+@media (min-width: 701px){
+  .sidebar{transition:width .22s ease}
+}
+
+.floating-ai {
+  position: fixed;
+  bottom: 18px;
+  left: 22px;
+  background: linear-gradient(135deg, #050600, #000a13);
+  padding: 12px 18px;
+  border-radius: 30px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 30px;
+  text-decoration: none;
+  box-shadow: 0 0 12px rgba(5, 128, 190, 0.7);
+  transition: 0.3s ease;
+}
+.floating-ai:hover {
+  transform: scale(1.07);
+  box-shadow: 0 0 20px rgba(0,212,255,0.9);
+}
+
+
+.search-row{display:flex;gap:10px;align-items:center}
+#searchInput{
+  flex:1;padding:10px 12px;border-radius:10px;border:1px solid #222;background:#0f0f10;color:#fff;
+  outline:none;transition:all .22s ease;
+}
+#searchInput::placeholder{color:var(--muted)}
+
+#newNoteBtn{
+  background:var(--accent-2);border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600;
+}
+#newNoteBtn:hover{background: #6366f1}
+
+/* compact list */
+.compact-list{list-style:none;padding:0;margin:0;overflow:auto;flex:1}
+.compact-list li{padding:12px;border-radius:8px;margin-bottom:8px;background:transparent;border:1px solid transparent;cursor:pointer}
+.compact-list li:hover{background:#0f1724;border-color:#1f2937}
+.compact-list li.active{background:#111827;border-color:#374151;color:var(--accent)}
+
+/* editor */
+.note-editor{flex:1;padding:28px;display:flex;flex-direction:column;gap:12px}
+#noteTitle{font-size:1.8rem;font-weight:700;color:#fff;outline:none;padding:8px 0;line-height:1.05}
+#noteContent{flex:1;min-height:60vh;background:#0c0c0c;border:1px solid #1f1f1f;border-radius:8px;padding:16px;color:#fff;resize:none;font-size:1.125rem;line-height:1.5}
+.editor-actions{display:flex;gap:10px;justify-content:flex-end}
+.editor-actions button{background:var(--accent);border:none;color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:600}
+.editor-actions button:hover{background:#5b21b6}
+
+/* SEARCH Overlay panel */
+#searchOverlay{position:fixed;inset:0;display:flex;align-items:flex-start;justify-content:center;z-index:var(--panel-z)}
+#searchOverlay.hidden{display:none}
+#searchOverlay::before{
+  content:"";position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter: blur(3px);z-index:var(--panel-z);
+}
+qz
+/* panel (centered horizontally, near top) */
+.search-panel{
+  position:relative;z-index:calc(var(--panel-z)+1);
+  margin-top:80px;
+  width:min(880px,95%);
+  background:linear-gradient(180deg,#0b0b0b,#0f0f0f);
+  border-radius:12px;
+  border:1px solid #222;
+  box-shadow:0 10px 40px rgba(0,0,0,.6);
+  overflow:hidden;
+}
+
+/* top row contains expanded search + new */
+.search-panel-top{display:flex;gap:10px;padding:14px}
+#expandedSearchInput{
+  flex:1;padding:14px;border-radius:10px;border:1px solid #2b2b2b;background:#0b0b0b;color:#fff;font-size:1.05rem;outline:none;
+}
+#panelNewBtn{background:var(--accent-2);border:none;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
+#panelNewBtn:hover{background:#6366f1}
+
+/* results */
+.search-results{max-height:420px;overflow:auto;padding:8px;border-top:1px solid #1f1f1f}
+.result-item{
+  display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:8px;cursor:pointer;
+}
+.result-item:hover{background:#0f1724}
+.result-title{font-weight:700;color:#e2e8f0}
+.result-snippet{font-size:.9rem;color:#9ca3af;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.no-results{padding:24px;color:#9ca3af;text-align:center}
+
