@@ -1,41 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Notes | Student Companion</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="/assets/css/note.css" />
 </head>
-<body class="light-theme">
-
-  <header class="topbar">
-    <div class="brand">Student Companion — Team Black 🖤</div>
-    <nav class="topbar-actions">
-      <button id="theme-toggle">🌙</button>
-      <span id="user-greeting"></span>
-      <a href="home.html" class="btn">Home</a>
-      <a href="notes.html" class="btn">Notes</a>
-      <a href="timetable.html" class="btn">Timetable</a>
-      <a href="gpa.html" class="btn">GPA</a>
-      <a href="ai.html" class="btn">Black AI</a>
-      <a href="profile.html" class="btn">Profile</a>
-      <button id="logout-btn" class="btn">Logout</button>
+<body>
+  <header>
+    <button id="toggleSidebarBtn" class="toggle-sidebar" aria-label="Toggle topics">☰</button>
+    <h1>NOTES</h1>
+    <nav>
+      <ul>
+        <li>
+          <a href="homepage.html" aria-label="Back to homepage">
+            <!-- inline chevron SVG (crisp on all devices) -->
+            <svg class="back-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="34" height="34" style="fill:var(--accent);width:34px;height:34px;display:inline-block;vertical-align:middle;">
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+            </svg>
+          </a>
+        </li>
+      </ul>
     </nav>
   </header>
 
-  <main class="container">
-    <h1>Notes</h1>
-    <p>Your notes will appear here.</p>
+  <main class="notes-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="search-row">
+        <input id="searchInput" type="text" placeholder="Search topic..." autocomplete="off" />
+        <button id="newNoteBtn" title="New note">+ New</button>
+      </div>
+
+      <!-- Compact topic list (visible when search panel is collapsed) -->
+      <ul id="topicList" class="compact-list"></ul>
+    </aside>
+
+    <!-- Editor -->
+    <section class="note-editor">
+      <h2 id="noteTitle" contenteditable="true" spellcheck="false">Select or Create a Topic</h2>
+      <textarea id="noteContent" placeholder="Start writing your note..." disabled></textarea>
+
+      <div class="editor-actions">
+        <button id="saveNoteBtn">💾 Save</button>
+        <button id="deleteNoteBtn">🗑 Delete</button>
+      </div>
+    </section>
   </main>
 
-  <script src="js/theme.js"></script>
-  <script src="js/auth.js"></script>
+  <!-- Expanded search panel / overlay (hidden by default) -->
+  <div id="searchOverlay" class="hidden">
+    <div id="searchPanel" class="search-panel" role="dialog" aria-modal="true">
+      <div class="search-panel-top">
+        <input id="expandedSearchInput" type="text" placeholder="Search topics, or type to create..." autocomplete="on" />
+        <button id="panelNewBtn">+ New</button>
+      </div>
+
+      <div id="searchResults" class="search-results">
+        <!-- results will be injected here as list items (title + snippet) -->
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/notes.js"></script>
+    <a href="ai.html" class="floating-ai">🤖</a>
 </body>
 </html>
-
-
-
-
-
-
-
